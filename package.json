@@ -16,7 +16,8 @@
   "author": "509dave16",
   "license": "MIT",
   "dependencies": {
-    "inferno": "^5.2.0"
+    "inferno": "^5.2.0",
+    "inferno-router": "^5.2.0"
   },
   "devDependencies": {
     "@types/react": "^16.4.6",
