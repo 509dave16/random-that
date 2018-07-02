@@ -20,7 +20,7 @@ export default class ListsPage extends Component {
 					<div class="list">
 						{listService.getLists().map((list) => {
 							return (
-								<div class="list-item ripple" tabIndex={0} onClick={(e: Event) => this.navigate(e, list.id)} ref={ (node) => this.onListItemRef(node)}>
+								<div class="list-item ripple" onClick={(e: Event) => this.navigate(e, list.id)} ref={ (node) => this.onListItemRef(node)}>
 									<div class="level">
 										<div class="level-left">{list.name}</div>
 										<div class="level-right">
