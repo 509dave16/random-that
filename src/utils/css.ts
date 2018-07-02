@@ -11,3 +11,11 @@ export function toggleClassesOnEvents(el: HTMLElement, eventToClassesMap: any[])
 		classesToAdd.forEach((className) => allClasses.push(className));
 	}
 }
+
+export function toggleClassesOnHover(el: HTMLElement, classes: string[]) {
+	const eventToClassesMap: any = {
+		mouseleave: [],
+		mouseover: classes
+	};
+	toggleClassesOnEvents(el, eventToClassesMap);
+}

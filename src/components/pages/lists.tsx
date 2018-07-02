@@ -1,16 +1,11 @@
 import { Component } from 'inferno';
 import listService from '../../common/services/list.service';
-import { toggleClassesOnEvents } from '../../utils/css';
-
-const eventToClassesMap: any = {
-	mouseleave: [],
-	mouseover: ['has-text-white', 'has-background-primary']
-};
+import { toggleClassesOnHover } from '../../utils/css';
 
 export default class ListsPage extends Component {
 
 	public onListItemRef = (node) => {
-		toggleClassesOnEvents(node, eventToClassesMap);
+		toggleClassesOnHover(node, ['has-text-white', 'has-background-primary']);
 	}
 
 	public navigate = (e: Event, listId: string) => {
