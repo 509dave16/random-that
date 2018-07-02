@@ -10,8 +10,7 @@ const eventToClassesMap: any = {
 export default class ListsPage extends Component {
 
 	public onListItemRef = (node) => {
-		const boundToggle = toggleClassesOnEvents.bind(this);
-		boundToggle(node, eventToClassesMap);
+		toggleClassesOnEvents(node, eventToClassesMap);
 	}
 
 	public navigate = (e: Event, listId: string) => {
@@ -26,7 +25,7 @@ export default class ListsPage extends Component {
 					<div class="list">
 						{listService.getLists().map((list) => {
 							return (
-								<div class="list-item" onClick={(e: Event) => this.navigate(e, list.id)} ref={ (node) => this.onListItemRef(node)}>
+								<div class="list-item ripple" tabIndex={0} onClick={(e: Event) => this.navigate(e, list.id)} ref={ (node) => this.onListItemRef(node)}>
 									<div class="level">
 										<div class="level-left">{list.name}</div>
 										<div class="level-right">
