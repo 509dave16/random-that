@@ -1,12 +1,20 @@
 {
   "compact": false,
-  "presets": [
-    ["es2015", {"loose": true, "modules": false}]
-  ],
+  "presets": [["es2015", { "loose": true, "modules": false }]],
   "plugins": [
     "transform-class-properties",
     "transform-object-rest-spread",
     "babel-plugin-syntax-jsx",
-    ["babel-plugin-inferno", {"imports": true}]
+    ["babel-plugin-inferno", { "imports": true }],
+    [
+      "module-resolver",
+      {
+        "root": ["."],
+        "alias": {
+          "react": "inferno-compat",
+          "react-dom": "inferno-compat"
+        }
+      }
+    ]
   ]
 }

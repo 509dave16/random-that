@@ -4,7 +4,7 @@ import ItemPage from './components/pages/item';
 import ItemsPage from './components/pages/items';
 import ListPage from './components/pages/list';
 import ListsPage from './components/pages/lists';
-
+import './main.sass';
 const container = document.getElementById('app');
 
 class MyComponent extends Component<any, any> {
@@ -26,10 +26,6 @@ class MyComponent extends Component<any, any> {
 				</div>
 			</BrowserRouter>
 		);
-		// <div>
-		// 	<h1>{`Welcome to Inferno ${version} TSX ${this.tsxVersion}`}</h1>
-		// 	<Incrementer name={'Crazy button'} />
-		// </div>
 	}
 }
 

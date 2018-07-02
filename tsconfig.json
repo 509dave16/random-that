@@ -15,7 +15,9 @@
 		],
 		"types": [
 			"inferno",
-			"inferno-router"
+			"inferno-router",
+			"inferno-vnode-flags",
+			"ionicons"
 		],
 		"jsx": "preserve",
 		"noUnusedLocals": true,
