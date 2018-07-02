@@ -14,6 +14,10 @@ export default class ListsPage extends Component {
 		boundToggle(node, eventToClassesMap);
 	}
 
+	public navigate = (e: Event, listId: string) => {
+		// this.props.history.push()
+	}
+
 	public render() {
 		return (
 			<section class="section">
@@ -22,7 +26,7 @@ export default class ListsPage extends Component {
 					<div class="list">
 						{listService.getLists().map((list) => {
 							return (
-								<div class="list-item" ref={ (node) => this.onListItemRef(node)}>
+								<div class="list-item" onClick={(e: Event) => this.navigate(e, list.id)} ref={ (node) => this.onListItemRef(node)}>
 									<div class="level">
 										<div class="level-left">{list.name}</div>
 										<div class="level-right">
