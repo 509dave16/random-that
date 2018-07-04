@@ -1,4 +1,7 @@
 export function toggleClassesOnEvents(el: HTMLElement, eventToClassesMap: any[]) {
+	if (!el) {
+		return;
+	}
 	const allClasses: string[] = [];
 	for (const eventName in eventToClassesMap) {
 		const eventClasses: string[] = eventToClassesMap[eventName];

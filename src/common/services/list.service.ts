@@ -7,19 +7,19 @@ class ListService {
 		return lists;
 	}
 
-	public getList(listId: string) {
+	public getList(listId: string): List|undefined {
 		return lists.find((list) => list.id === listId);
 	}
 
-	public getListItems(listId: string) {
+	public getListItems(listId: string): Item[] {
 		return items.filter((item) => item.list_id === listId);
 	}
 
-	public getItem(itemId: string) {
+	public getItem(itemId: string): Item|undefined {
 		return items.find((item) => item.id === itemId);
 	}
 
-	public saveList(updatedList: List) {
+	public saveList(updatedList: List): void {
 		let listIndex = lists.findIndex((list) => list.id === updatedList.id);
 		let replace = 1;
 		if (listIndex === -1) {
@@ -29,7 +29,7 @@ class ListService {
 		lists.splice(listIndex, replace, updatedList);
 	}
 
-	public saveItem(updatedItem: Item) {
+	public saveItem(updatedItem: Item): void {
 		let itemIndex = items.findIndex((item) => item.id === updatedItem.id);
 		let replace = 1;
 		if (itemIndex === -1) {
@@ -39,12 +39,12 @@ class ListService {
 		items.splice(itemIndex, replace, updatedItem);
 	}
 
-	public deleteList(listId: string) {
+	public deleteList(listId: string): void {
 		const listIndex = lists.findIndex((list) => list.id === listId);
 		lists.splice(listIndex, 1);
 	}
 
-	public deleteItem(itemId: string) {
+	public deleteItem(itemId: string): void {
 		const itemIndex = items.findIndex((item) => item.id === itemId);
 		items.splice(itemIndex, 1);
 	}
