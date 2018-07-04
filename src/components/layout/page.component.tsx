@@ -13,8 +13,16 @@ export interface PageProps {
 
 export class PageComponent extends Component<PageProps, {}> {
 
+	public hamburgerEl: any;
+	public menuEl: any;
+
 	public gotoUrl = (url: string) => {
 		this.props.history.push(url);
+	}
+
+	public toggleMenu = (e: Event) => {
+		this.hamburgerEl.classList.toggle('is-active');
+		this.menuEl.classList.toggle('is-active');
 	}
 
 	public render(nextProps: PageProps, nextState: {}, nextContext: any) {
@@ -46,15 +54,15 @@ export class PageComponent extends Component<PageProps, {}> {
 						<h1 class="title">{options.title}</h1>
 					</div>
 
-					<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+					<a onClick={this.toggleMenu} ref={ (el) => { this.hamburgerEl = el; }} role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
 						<span aria-hidden="true"></span>
 						<span aria-hidden="true"></span>
 						<span aria-hidden="true"></span>
 					</a>
 				</div>
-				<div id="navMenu" class="navbar-menu">
+				<div ref={ (el) => { this.menuEl = el; }} id="navMenu" class="navbar-menu">
 					<div class="navbar-start">
-						<a role="button" onClick={(e) => this.gotoUrl('/lists') } class="navbar-item is-active">Lists</a>
+						<a role="button" onClick={(e) => this.gotoUrl('/lists') } class="navbar-item">Lists</a>
 					</div>
 				</div>
 			</nav>

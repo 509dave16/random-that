@@ -12,15 +12,14 @@ interface Props {
 interface State { item: Item }
 
 export default class ItemPage extends BaseComponent<Props, State> {
-	public item: Item;
 	public handleNameChange: Function;
 	public title: string;
 	constructor(props) {
 		super(props);
 		const { params } = this.props.match;
-		this.item = listService.getItem(params.itemId) || { id: '0', list_id: params.listId, name: '' };
-		this.state = { item: this.item };
-		this.title = this.state.item.name;
+		const item = listService.getItem(params.itemId) || { id: '0', list_id: params.listId, name: '' };
+		this.title = item.name;
+		this.state = { item };
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {

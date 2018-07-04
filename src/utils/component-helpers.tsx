@@ -1,3 +1,4 @@
+// NOTE: Do not use. Will not work for showing state changes to value
 export function handleInputHoc() {
 	return function(propName: string, event: any) {
 		let leafReceiver = this;
