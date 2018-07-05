@@ -11,9 +11,26 @@ interface Props {
 	location: any;
 }
 // tslint:disable-next-line
-interface State {}
+interface State {
+	list: List;
+	items: Item[];
+}
 
 export default class ListPage extends BaseComponent<Props, State> {
+	constructor(props) {
+		super(props);
+		this.state = { items: [], list: { id: '0', name: ''} };
+	}
+
+	public async componentWillMount() {
+		const { params } = this.props.match;
+		const list: List|undefined = await listService.getList(params.listId);
+		if (!list) {
+			return;
+		}
+		const items: Item[] = await listService.getListItems(list.id);
+		this.setState({ items, list });
+	}
 
 	public onListItemRef = (node) => {
 		toggleClassesOnHover(node, ['has-text-white', 'has-background-primary']);
@@ -25,16 +42,14 @@ export default class ListPage extends BaseComponent<Props, State> {
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {
-		const { params } = this.props.match;
-		const list: List|undefined = listService.getList(params.listId);
-		if (!list) {
+		if (!nextState.list) {
 			return <div>List is missing</div>;
 		}
 		return (
-			<PageComponent history={this.props.history} headerOptions={{ title: list.name }}>
+			<PageComponent history={this.props.history} headerOptions={{ title: nextState.list.name }}>
 				<div class="list">
 					{
-						listService.getListItems(list.id).map((item: Item) => {
+						nextState.items.map((item: Item) => {
 							return (
 								<div class="list-item ripple" onClick={(e: Event) => this.navigate(e, item.id)} ref={ (node) => this.onListItemRef(node)}>
 									<div class="level">

@@ -12,14 +12,18 @@ interface Props {
 interface State { item: Item }
 
 export default class ItemPage extends BaseComponent<Props, State> {
-	public handleNameChange: Function;
 	public title: string;
+
 	constructor(props) {
 		super(props);
+		this.state = { item: { id: '0', name: '', list_id: '0'} };
+	}
+
+	public async componentWillMount() {
 		const { params } = this.props.match;
-		const item = listService.getItem(params.itemId) || { id: '0', list_id: params.listId, name: '' };
+		const item = await listService.getItem(params.itemId) || { id: '0', list_id: params.listId, name: '' };
 		this.title = item.name;
-		this.state = { item };
+		this.setState({ item });
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {

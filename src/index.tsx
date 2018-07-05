@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import { Component, render } from 'inferno';
 import { BrowserRouter, Route, Switch } from 'inferno-router';
 import ItemPage from './components/pages/item.page';
