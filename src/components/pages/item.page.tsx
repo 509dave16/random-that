@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { BaseComponent } from '../../common/classes/base.component';
+import { emptyItem } from '../../common/data/mocks';
 import { Item } from '../../common/interfaces/item.interface';
 import listService from '../../common/services/list.service';
 import { PageComponent } from '../layout/page.component';
@@ -16,12 +17,12 @@ export default class ItemPage extends BaseComponent<Props, State> {
 
 	constructor(props) {
 		super(props);
-		this.state = { item: { id: '0', name: '', list_id: '0'}, updating: false, title: '' };
+		this.state = { item: { ...emptyItem }, updating: false, title: '' };
 	}
 
 	public async componentWillMount() {
 		const { params } = this.props.match;
-		const item = await listService.getItem(params.itemId) || { id: '0', list_id: params.listId, name: '' };
+		const item = await listService.getItem(params.itemId) || { ...emptyItem };
 		this.setState({ item, title: item.name });
 	}
 

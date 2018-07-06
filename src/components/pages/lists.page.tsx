@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { BaseComponent } from '../../common/classes/base.component';
+import { emptyList } from '../../common/data/mocks';
 import { List } from '../../common/interfaces/list.interface';
 import listService from '../../common/services/list.service';
 import { toggleClassesOnHover } from '../../utils/css';
@@ -12,17 +13,15 @@ interface Props {
 interface State {
 	lists: List[];
 	newList: List;
-	creating: boolean;
+	waiting: boolean;
 	listFormIsHidden: boolean;
 	addListIsHidden: boolean;
 }
 
-const emptyList: List = { id: '', name: ''};
-
 export default class ListsPage extends BaseComponent<Props, State> {
 	constructor(props) {
 		super(props);
-		this.state = { lists: [], newList: { ...emptyList } , listFormIsHidden: true, addListIsHidden: false, creating: false };
+		this.state = { lists: [], newList: { ...emptyList } , listFormIsHidden: true, addListIsHidden: false, waiting: false };
 	}
 
 	public onListRef = (node) => {
@@ -42,16 +41,16 @@ export default class ListsPage extends BaseComponent<Props, State> {
 	}
 
 	public async createList(state: State) {
-		if (state.creating) {
+		if (state.waiting) {
 			return; // don't perform again
 		}
 		const list: List = state.newList;
 		list.id += Math.floor(Math.random() * 10000);
-		this.setState({ creating: true });
+		this.setState({ waiting: true });
 		await listService.saveList(list);
 		const lists: List[] = state.lists;
 		this.toggleCreateList(state);
-		this.setState({ creating: false, lists: [...lists, list] });
+		this.setState({ waiting: false, lists: [...lists, list] });
 	}
 
 	public async deleteList(e: Event, listId: string) {
@@ -71,7 +70,7 @@ export default class ListsPage extends BaseComponent<Props, State> {
 	public render(nextProps: Props, nextState: State, nextContext: any) {
 		const listFormClassNames = classNames('m-t-sm', {'is-hidden': nextState.listFormIsHidden});
 		const addListClassNames = classNames('m-t-sm', 'button', 'is-info', {'is-hidden': nextState.addListIsHidden});
-		const createListClassNames = classNames('button', 'is-success', 'm-r-sm', { isLoading: nextState.creating });
+		const createListClassNames = classNames('button', 'is-success', 'm-r-sm', { isLoading: nextState.waiting });
 
 		return (
 			<PageComponent history={this.props.history} headerOptions={{ title: 'Lists'}}>
