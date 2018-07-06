@@ -16,6 +16,10 @@
   "author": "509dave16",
   "license": "MIT",
   "dependencies": {
+    "@capacitor/android": "^1.0.0-beta.0",
+    "@capacitor/cli": "^1.0.0-beta.0",
+    "@capacitor/core": "^1.0.0-beta.0",
+    "@capacitor/ios": "^1.0.0-beta.0",
     "babel-polyfill": "^6.26.0",
     "bulma": "^0.7.1",
     "classnames": "^2.2.6",

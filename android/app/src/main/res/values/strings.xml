@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Random That</string>
+    <string name="title_activity_main">Random That</string>
+    <string name="package_name">dsf.randomthat.app</string>
+    <string name="fileprovider_authority">dsf.randomthat.app.fileprovider</string>
+    <string name="custom_url_scheme">dsf.randomthat.app</string>
+</resources>

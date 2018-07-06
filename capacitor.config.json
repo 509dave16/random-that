@@ -1,0 +1,6 @@
+{
+  "appId": "dsf.randomthat.app",
+  "appName": "Random That",
+  "bundledWebRuntime": false,
+  "webDir": "dist"
+}
