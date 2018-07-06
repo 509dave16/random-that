@@ -18,6 +18,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "bulma": "^0.7.1",
+    "classnames": "^2.2.6",
     "inferno": "^5.2.0",
     "inferno-clone-vnode": "^5.2.0",
     "inferno-compat": "^5.2.0",

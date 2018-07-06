@@ -1,7 +1,7 @@
 import { BaseComponent } from '../../common/classes/base.component';
 import { Item } from '../../common/interfaces/item.interface';
 import listService from '../../common/services/list.service';
-import { PageComponent } from '../../components/layout/page.component';
+import { PageComponent } from '../layout/page.component';
 
 interface Props {
 	history: any;
