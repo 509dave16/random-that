@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { BaseComponent } from '../../common/classes/base.component';
 import { Item } from '../../common/interfaces/item.interface';
 import listService from '../../common/services/list.service';
@@ -9,34 +10,51 @@ interface Props {
 	location: any;
 }
 // tslint:disable-next-line
-interface State { item: Item }
+interface State { item: Item, updating: boolean, title: string }
 
 export default class ItemPage extends BaseComponent<Props, State> {
-	public title: string;
 
 	constructor(props) {
 		super(props);
-		this.state = { item: { id: '0', name: '', list_id: '0'} };
+		this.state = { item: { id: '0', name: '', list_id: '0'}, updating: false, title: '' };
 	}
 
 	public async componentWillMount() {
 		const { params } = this.props.match;
 		const item = await listService.getItem(params.itemId) || { id: '0', list_id: params.listId, name: '' };
-		this.title = item.name;
-		this.setState({ item });
+		this.setState({ item, title: item.name });
+	}
+
+	public async updateItem(state: State) {
+		if (state.updating) {
+			return; // don't perform again
+		}
+		const item: Item = state.item;
+		this.setState({ updating: true });
+		await listService.saveItem(item);
+		this.setState({ updating: false, item: {... item}, title: item.name });
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {
 		if (!nextState.item) {
 			return <div>Item is missing</div>;
 		}
+		const updateItemClassNames = classNames('m-t-sm', 'button', 'is-success');
 		return (
-			<PageComponent history={this.props.history} headerOptions={{ title: this.title }}>
+			<PageComponent history={this.props.history} headerOptions={{ title: nextState.title }}>
 				<div class="field">
 					<label class="label">Name</label>
 					<div class="control">
 						<input value={nextState.item.name} onInput={(e: Event) => this.handleStateInput('item.name', e) } class="input" type="text" placeholder="Text input" />
 					</div>
+				</div>
+				<div class="has-text-centered" >
+					<a onClick={(e) => { this.updateItem(nextState); }} className={updateItemClassNames}>
+						<span class="icon">
+							<ion-icon color="white" size="large" name="save"></ion-icon>
+						</span>
+						<span>Update</span>
+					</a>
 				</div>
 			</PageComponent>
 		);
