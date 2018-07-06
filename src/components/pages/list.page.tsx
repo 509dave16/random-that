@@ -86,7 +86,7 @@ export default class ListPage extends BaseComponent<Props, State> {
 		this.toggleRandomThatModal();
 	}
 
-	public cancelRandomItem(state) {
+	public cancelRandomItem = (state: State) => {
 		this.setState({ randomItem: { ...emptyItem} });
 		this.toggleRandomThatModal();
 	}
@@ -202,7 +202,6 @@ export default class ListPage extends BaseComponent<Props, State> {
 					<article class="message">
 						<div class="message-header">
 							<p>Random {nextState.list.name}</p>
-							<button class="delete" aria-label="delete"></button>
 						</div>
 						<div class="message-body">
 						<h4>{ nextState.randomItem.name }</h4>

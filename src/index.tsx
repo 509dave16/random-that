@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 import { Component, render } from 'inferno';
-import { BrowserRouter, Route, Switch } from 'inferno-router';
+import { BrowserRouter, Redirect, Route, Switch } from 'inferno-router';
 import ItemPage from './components/pages/item.page';
 import ListPage from './components/pages/list.page';
 import ListsPage from './components/pages/lists.page';
@@ -20,6 +20,7 @@ class MyComponent extends Component<any, any> {
 						<Route path="/lists/:listId/items/:itemId" component={ItemPage} />
 						<Route path="/lists/:listId" component={ListPage} />
 						<Route path="/lists" component={ListsPage} />
+						<Redirect from="/" to="/lists" />
 					</Switch>
 				</div>
 			</BrowserRouter>
