@@ -66,6 +66,19 @@ export default class ListPage extends BaseComponent<Props, State> {
 		this.setState({ creating: false, items: [...items, item] });
 	}
 
+	public async deleteItem(e: Event, itemId: string) {
+		e.stopPropagation();
+		const item: Item|undefined = await listService.deleteItem(itemId);
+		if (item) {
+			const items = await listService.getListItems(item.list_id);
+			this.setState({ items });
+		}
+	}
+
+	public onTrashRef = (node) => {
+		toggleClassesOnHover(node, ['c-pointer']);
+	}
+
 	public render(nextProps: Props, nextState: State, nextContext: any) {
 		if (!nextState.list) {
 			return <div>List is missing</div>;
@@ -83,6 +96,7 @@ export default class ListPage extends BaseComponent<Props, State> {
 									<div class="level">
 										<div class="level-left">{item.name}</div>
 										<div class="level-right">
+											<a onClick={(e) => this.deleteItem(e, item.id)} ref={(node) => this.onTrashRef(node) }><ion-icon name="trash" color="danger"></ion-icon></a>
 											<ion-icon mode="ios" name="arrow-forward"></ion-icon>
 										</div>
 									</div>

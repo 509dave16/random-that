@@ -41,16 +41,14 @@ class ListService {
 		return Promise.resolve(true);
 	}
 
-	public deleteList(listId: string): Promise<any> {
+	public deleteList(listId: string): Promise<List|undefined> {
 		const listIndex = lists.findIndex((list) => list.id === listId);
-		lists.splice(listIndex, 1);
-		return Promise.resolve(true);
+		return Promise.resolve(lists.splice(listIndex, 1).pop());
 	}
 
-	public deleteItem(itemId: string): Promise<any> {
+	public deleteItem(itemId: string): Promise<Item|undefined> {
 		const itemIndex = items.findIndex((item) => item.id === itemId);
-		items.splice(itemIndex, 1);
-		return Promise.resolve(true);
+		return Promise.resolve(items.splice(itemIndex, 1).pop());
 	}
 }
 

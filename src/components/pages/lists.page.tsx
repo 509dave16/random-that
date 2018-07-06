@@ -29,6 +29,10 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		toggleClassesOnHover(node, ['has-text-white', 'has-background-primary']);
 	}
 
+	public onTrashRef = (node) => {
+		toggleClassesOnHover(node, ['c-pointer']);
+	}
+
 	public navigate = (e: Event, listId: string) => {
 		this.props.history.push(`/lists/${listId}`);
 	}
@@ -48,6 +52,15 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		const lists: List[] = state.lists;
 		this.toggleCreateList(state);
 		this.setState({ creating: false, lists: [...lists, list] });
+	}
+
+	public async deleteList(e: Event, listId: string) {
+		e.stopPropagation();
+		const list: List|undefined = await listService.deleteList(listId);
+		if (list) {
+			const lists = await listService.getLists();
+			this.setState({ lists });
+		}
 	}
 
 	public async componentWillMount() {
@@ -70,6 +83,7 @@ export default class ListsPage extends BaseComponent<Props, State> {
 									<div class="level">
 										<div class="level-left">{list.name}</div>
 										<div class="level-right">
+											<a onClick={(e) => this.deleteList(e, list.id)} ref={(node) => this.onTrashRef(node) }><ion-icon color="danger" name="trash"></ion-icon></a>
 											<ion-icon mode="ios" name="arrow-forward"></ion-icon>
 										</div>
 									</div>
