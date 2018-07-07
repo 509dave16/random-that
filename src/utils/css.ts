@@ -15,28 +15,28 @@ export function toggleClassesOnEvents(el: HTMLElement, eventToClassesMap: any[])
 	}
 }
 
-export function toggleClassesOnHover(el: HTMLElement, classes: string[]) {
+export function toggleClassesOnHover(el: HTMLElement, onClasses: string[], offClasses: string[] = []) {
 	const eventToClassesMap: any = {
-		mouseleave: [],
-		mouseover: classes
+		mouseleave: offClasses,
+		mouseover: onClasses
 	};
 	toggleClassesOnEvents(el, eventToClassesMap);
 }
 
-export function toggleClassesOnTouch(el: HTMLElement, classes: string[]) {
+export function toggleClassesOnTouch(el: HTMLElement, onClasses: string[], offClasses: string[] = []) {
 	const eventToClassesMap: any = {
-		touchend: classes,
-		touchstart: []
+		touchend: offClasses,
+		touchstart: onClasses
 	};
 	toggleClassesOnEvents(el, eventToClassesMap);
 }
 
-export function toggleClassesOnInteract(el: HTMLElement, classes: string[]) {
+export function toggleClassesOnInteract(el: HTMLElement, onClasses: string[], offClasses: string[] = []) {
 	const eventToClassesMap: any = {
-		mouseleave: [],
-		mouseover: classes,
-		touchend: [],
-		touchstart: classes
+		mouseleave: offClasses,
+		mouseover: onClasses,
+		touchend: offClasses,
+		touchstart: onClasses
 	};
 	toggleClassesOnEvents(el, eventToClassesMap);
 }

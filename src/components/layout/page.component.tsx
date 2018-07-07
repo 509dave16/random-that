@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { Component } from 'inferno';
+import { toggleClassesOnInteract } from '../../utils/css';
 export interface HeaderOptions {
 	back?: boolean;
 	buttons?: JSX.Element[];
@@ -17,6 +18,10 @@ export class PageComponent extends Component<PageProps, {}> {
 
 	public hamburgerEl: any;
 	public menuEl: any;
+
+	public onNavbarItemRef = (node) => {
+		toggleClassesOnInteract(node, ['has-text-info']);
+	}
 
 	public gotoUrl = (url: string) => {
 		this.props.history.push(url);
@@ -64,7 +69,7 @@ export class PageComponent extends Component<PageProps, {}> {
 						<h1 class="title has-text-white">{options.title}</h1>
 					</div>
 
-					<a onClick={this.toggleMenu} ref={ (el) => { this.hamburgerEl = el; }} role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+					<a onClick={this.toggleMenu} ref={ (el) => { this.hamburgerEl = el; }} role="button" class="navbar-burger has-text-white" aria-label="menu" aria-expanded="false">
 						<span aria-hidden="true"></span>
 						<span aria-hidden="true"></span>
 						<span aria-hidden="true"></span>
@@ -72,7 +77,7 @@ export class PageComponent extends Component<PageProps, {}> {
 				</div>
 				<div ref={ (el) => { this.menuEl = el; }} id="navMenu" class="navbar-menu">
 					<div class="navbar-start">
-						<a role="button" onClick={(e) => this.gotoUrl('/lists') } class="navbar-item">Lists</a>
+						<a ref={(node) => this.onNavbarItemRef(node) } role="button" onClick={(e) => this.gotoUrl('/lists') } class="has-text-white has-text-info-mobile navbar-item">Lists</a>
 					</div>
 				</div>
 			</nav>
