@@ -24,8 +24,8 @@ export class PageComponent extends Component<PageProps, {}> {
 	}
 
 	public gotoUrl = (url: string) => {
-		this.props.history.push(url);
 		this.toggleMenu();
+		this.props.history.push(url);
 	}
 
 	public goBack = () => {
