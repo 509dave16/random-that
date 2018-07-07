@@ -65,7 +65,7 @@ export class PageComponent extends Component<PageProps, {}> {
 			<nav class={`navbar has-text-${options.textColor} has-background-${options.backgroundColor}`} role="navigation" aria-label="main navigation">
 				<div class="navbar-brand">
 					<div class="navbar-item is-hidden-tablet">
-						<span className={backIconClassNames} onClick={this.goBack}><ion-icon name="arrow-back" color="light" size="large"></ion-icon></span>
+						<a className={backIconClassNames} onClick={this.goBack}><ion-icon name="arrow-back" color="light" size="large"></ion-icon></a>
 						<h1 class="title has-text-white">{options.title}</h1>
 					</div>
 
