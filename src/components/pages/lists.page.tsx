@@ -74,7 +74,7 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		const createListClassNames = classNames('button', 'is-success', 'm-r-sm', { isLoading: nextState.waiting });
 
 		return (
-			<PageComponent history={this.props.history} headerOptions={{ title: 'Lists'}}>
+			<PageComponent history={this.props.history} headerOptions={{ back: false, title: 'Lists'}}>
 				<div class="list">
 					{
 						nextState.lists.map((list) => {

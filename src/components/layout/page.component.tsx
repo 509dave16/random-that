@@ -1,5 +1,7 @@
+import classNames from 'classnames';
 import { Component } from 'inferno';
 export interface HeaderOptions {
+	back?: boolean;
 	buttons?: JSX.Element[];
 	textColor?: string;
 	backgroundColor?: string;
@@ -18,6 +20,10 @@ export class PageComponent extends Component<PageProps, {}> {
 
 	public gotoUrl = (url: string) => {
 		this.props.history.push(url);
+	}
+
+	public goBack = () => {
+		this.props.history.goBack();
 	}
 
 	public toggleMenu = (e: Event) => {
@@ -42,17 +48,20 @@ export class PageComponent extends Component<PageProps, {}> {
 
 	private createHeader(headerOptions: HeaderOptions) {
 		const defaultOptions: HeaderOptions = {
+			back: true,
 			backgroundColor: 'info',
 			buttons: [],
 			textColor: 'white',
 			title: 'Default'
 		};
 		const options = Object.assign({}, defaultOptions, headerOptions);
+		const backIconClassNames = classNames('icon', {'is-invisible': !options.back });
 		return (
 			<nav class={`navbar has-text-${options.textColor} has-background-${options.backgroundColor}`} role="navigation" aria-label="main navigation">
 				<div class="navbar-brand">
 					<div class="navbar-item is-hidden-tablet">
-						<h1 class="title">{options.title}</h1>
+						<span className={backIconClassNames} onClick={this.goBack}><ion-icon name="arrow-back" color="light" size="large"></ion-icon></span>
+						<h1 class="title has-text-white">{options.title}</h1>
 					</div>
 
 					<a onClick={this.toggleMenu} ref={ (el) => { this.hamburgerEl = el; }} role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
