@@ -4,6 +4,7 @@ $paddingKey: 'p';
 $separator: '-';
 $sizes: (
     ('none', 0),
+    ('auto', 0),
     ('xxs', 0.125),
     ('xs', 0.25),
     ('sm', 0.5),
@@ -20,7 +21,13 @@ $positions: (
 );
 
 @function sizeValue($key, $value) {
-    @return if($key == 'none', 0, $value + $sizeUnit);
+    @if $key == "none" {
+        @return 0;
+    } @else if $key == "auto" {
+        @return auto;
+    } @else {
+        @return $value + $sizeUnit
+    }
 }
 
 @each $size in $sizes {

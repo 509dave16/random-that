@@ -25,14 +25,14 @@ export class PageComponent extends Component<PageProps, {}> {
 
 	public gotoUrl = (url: string) => {
 		this.props.history.push(url);
+		this.toggleMenu();
 	}
 
 	public goBack = () => {
 		this.props.history.goBack();
 	}
 
-	public toggleMenu = (e: Event) => {
-		e.stopPropagation();
+	public toggleMenu = () => {
 		this.hamburgerEl.classList.toggle('is-active');
 		this.menuEl.classList.toggle('is-active');
 	}
@@ -76,8 +76,10 @@ export class PageComponent extends Component<PageProps, {}> {
 					</a>
 				</div>
 				<div ref={ (el) => { this.menuEl = el; }} id="navMenu" class="navbar-menu">
-					<div class="navbar-start">
+					<div class="navbar-start m-l-auto">
 						<a ref={(node) => this.onNavbarItemRef(node) } role="button" onClick={(e) => this.gotoUrl('/lists') } class="has-text-white has-text-info-mobile navbar-item">Lists</a>
+						<h1 class="title has-text-white has-text-info-mobile navbar-item is-hidden-mobile is-marginless">Random That</h1>
+						<a style={{ visibility: 'hidden' }} class="has-text-white has-text-info-mobile navbar-item is-hidden-mobile">Lists</a>
 					</div>
 				</div>
 			</nav>
