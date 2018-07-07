@@ -4,8 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-	mode: "development",
-	devtool: "source-map",
 	entry: "./src/index.tsx", // Point to main file
 	output: {
 		path: __dirname + "/dist",
@@ -29,19 +27,16 @@ module.exports = {
 				]
 			},
 			{
-				test: /\.tsx?$/, 						  // All ts and tsx files will be process by
-				use: [ { loader: 'babel-loader' }, { loader: 'ts-loader' } ], // first babel-loader, then ts-loader
-				exclude: /node_modules/                   // ignore node_modules
-			}, {
-				test: /\.jsx?$/,                          // all js and jsx files will be processed by
-				use: 'babel-loader',                   // babel-loader
-				exclude: /node_modules/                  // ignore node_modules
-			}
+				test: /\.tsx?$/,
+				loaders: [ 'babel-loader', 'ts-loader' ], // first babel-loader, then ts-loader
+				exclude: /node_modules/
+			},
+			{
+				test: /\.jsx?$/,
+				loader: 'ts-loader',
+				exclude: /node_modules/
+			},
 		]
-	},
-	devServer: {
-		contentBase: "src/",
-		historyApiFallback: true
 	},
 	plugins: [
 		new HtmlWebpackPlugin(
