@@ -70,7 +70,7 @@ export default class ListsPage extends BaseComponent<Props, State> {
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {
 		const listFormClassNames = classNames('m-t-sm', {'is-hidden': nextState.listFormIsHidden});
-		const addListClassNames = classNames('m-t-sm', 'button', 'is-info', {'is-hidden': nextState.addListIsHidden});
+		const addListClassNames = classNames('is-flex-basis-100-mobile', 'm-t-sm', 'button', 'is-info', {'is-hidden': nextState.addListIsHidden});
 		const createListClassNames = classNames('button', 'is-success', 'm-r-sm', { isLoading: nextState.waiting });
 
 		return (
@@ -106,12 +106,14 @@ export default class ListsPage extends BaseComponent<Props, State> {
 						<button onClick={ (e: Event) => this.toggleCreateList(nextState) }class="button is-danger">Cancel</button>
 					</div>
 				</div>
-				<a onClick={(e) => { this.toggleCreateList(nextState); }} className={addListClassNames}>
-					<span class="icon">
-						<ion-icon color="white" size="large" name="add"></ion-icon>
-					</span>
-					<span>Add List</span>
-				</a>
+				<div class="is-flex">
+					<a onClick={(e) => { this.toggleCreateList(nextState); }} className={addListClassNames}>
+						<span class="icon">
+							<ion-icon color="white" size="large" name="add"></ion-icon>
+						</span>
+						<span>Add List</span>
+					</a>
+				</div>
 			</PageComponent>
 		);
 	}

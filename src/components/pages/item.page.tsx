@@ -40,7 +40,7 @@ export default class ItemPage extends BaseComponent<Props, State> {
 		if (!nextState.item) {
 			return <div>Item is missing</div>;
 		}
-		const updateItemClassNames = classNames('m-t-sm', 'button', 'is-success');
+		const updateItemClassNames = classNames('m-t-sm', 'button', 'is-success', 'is-flex-basis-100-mobile');
 		return (
 			<PageComponent history={this.props.history} headerOptions={{ title: nextState.title }}>
 				<div class="field">
@@ -49,7 +49,7 @@ export default class ItemPage extends BaseComponent<Props, State> {
 						<input value={nextState.item.name} onInput={(e: Event) => this.handleStateInput('item.name', e) } class="input" type="text" placeholder="Text input" />
 					</div>
 				</div>
-				<div class="has-text-centered" >
+				<div class="is-flex">
 					<a onClick={(e) => { this.updateItem(nextState); }} className={updateItemClassNames}>
 						<span class="icon">
 							<ion-icon color="white" size="large" name="save"></ion-icon>

@@ -1,0 +1,13 @@
+@include mobile {
+	.is-flex-wrap-mobile {
+		flex-wrap: wrap;
+	}
+	
+	.is-flex-basis-100-mobile {
+		flex-basis: 100%;
+	}
+
+	.is-m-r-0-mobile {
+		margin-right: 0;
+	}
+}
