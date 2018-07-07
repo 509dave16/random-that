@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import { Component, render } from 'inferno';
 import { BrowserRouter, Redirect, Route, Switch } from 'inferno-router';
 import ItemPage from './components/pages/item.page';
@@ -7,7 +6,7 @@ import ListsPage from './components/pages/lists.page';
 import './main.sass';
 const container = document.getElementById('app');
 
-class MyComponent extends Component<any, any> {
+class MyComponent extends Component {
 	constructor(props, context) {
 		super(props, context);
 	}
