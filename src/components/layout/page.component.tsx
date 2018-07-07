@@ -21,6 +21,7 @@ export class PageComponent extends Component<PageProps, {}> {
 	}
 
 	public toggleMenu = (e: Event) => {
+		e.stopPropagation();
 		this.hamburgerEl.classList.toggle('is-active');
 		this.menuEl.classList.toggle('is-active');
 	}

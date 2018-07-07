@@ -4,7 +4,7 @@ import { emptyItem } from '../../common/data/mocks';
 import { Item } from '../../common/interfaces/item.interface';
 import { List } from '../../common/interfaces/list.interface';
 import listService from '../../common/services/list.service';
-import { toggleClassesOnHover } from '../../utils/css';
+import { toggleClassesOnHover, toggleClassesOnInteract } from '../../utils/css';
 import { PageComponent } from '../layout/page.component';
 
 interface Props {
@@ -42,10 +42,11 @@ export default class ListPage extends BaseComponent<Props, State> {
 	}
 
 	public onListItemRef = (node) => {
-		toggleClassesOnHover(node, ['has-text-white', 'has-background-primary']);
+		toggleClassesOnInteract(node, ['has-text-white', 'has-background-primary']);
 	}
 
 	public navigate = (e: Event, listItemId: string) => {
+		e.stopPropagation();
 		const { params } = this.props.match;
 		this.props.history.push(`/lists/${params.listId}/items/${listItemId}`);
 	}

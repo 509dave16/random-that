@@ -22,3 +22,21 @@ export function toggleClassesOnHover(el: HTMLElement, classes: string[]) {
 	};
 	toggleClassesOnEvents(el, eventToClassesMap);
 }
+
+export function toggleClassesOnTouch(el: HTMLElement, classes: string[]) {
+	const eventToClassesMap: any = {
+		touchend: classes,
+		touchstart: []
+	};
+	toggleClassesOnEvents(el, eventToClassesMap);
+}
+
+export function toggleClassesOnInteract(el: HTMLElement, classes: string[]) {
+	const eventToClassesMap: any = {
+		mouseleave: [],
+		mouseover: classes,
+		touchend: [],
+		touchstart: classes
+	};
+	toggleClassesOnEvents(el, eventToClassesMap);
+}
