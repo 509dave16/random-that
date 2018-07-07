@@ -1,7 +1,7 @@
 {
 	"version": "2.9.2",
 	"compilerOptions": {
-		"target": "es6",
+		"target": "es5",
 		"module": "es6",
 		"allowJs": false,
 		"allowSyntheticDefaultImports": true,
