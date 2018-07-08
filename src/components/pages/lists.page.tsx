@@ -38,7 +38,12 @@ export default class ListsPage extends BaseComponent<Props, State> {
 	}
 
 	public toggleCreateList(state: State) {
-		this.setState({ newList: { ...emptyList }, addListIsHidden: !state.addListIsHidden, listFormIsHidden: !state.listFormIsHidden });
+		const newState = this.toggleCreateListState(state);
+		this.setState(newState);
+	}
+
+	public toggleCreateListState(state: State) {
+		return { newList: { ...emptyList }, addListIsHidden: !state.addListIsHidden, listFormIsHidden: !state.listFormIsHidden };
 	}
 
 	public async createList(state: State) {
@@ -50,8 +55,8 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		this.setState({ waiting: true });
 		await listService.saveList(list);
 		const lists: List[] = state.lists;
-		this.toggleCreateList(state);
-		this.setState({ waiting: false, lists: [...lists, list] });
+		const newState = this.toggleCreateListState(state);
+		this.setState({ ...newState, waiting: false, lists: [...lists, list] });
 	}
 
 	public async deleteList(e: Event, listId: string) {
@@ -95,7 +100,7 @@ export default class ListsPage extends BaseComponent<Props, State> {
 				<div className={listFormClassNames}>
 					<div class="field">
 						<p class="control has-icons-left">
-							<input onInput={(e: Event) => this.handleStateInput('newList.name', e)} class="input" type="text" placeholder="List Name" />
+							<input value={nextState.newList.name} onInput={(e: Event) => this.handleStateInput('newList.name', e)} class="input" type="text" placeholder="List Name" />
 							<span class="icon is-small is-left">
 								<ion-icon color="primary" name="list-box"></ion-icon>
 							</span>
