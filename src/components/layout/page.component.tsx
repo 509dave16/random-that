@@ -104,7 +104,7 @@ export class PageComponent extends Component<PageProps, PageState> {
 
 	private renderBreadcrumbs(nextState: PageState) {
 		return (
-			<nav class="breadcrumb" aria-label="breadcrumbs">
+			<nav class="breadcrumb is-hidden-mobile" aria-label="breadcrumbs">
 				<ul>
 					{
 						nextState.breadcrumbs.map((crumb: Breadcrumb, index: number, breadcrumbs: Breadcrumb[]) => {
