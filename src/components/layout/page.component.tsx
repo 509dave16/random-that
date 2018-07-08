@@ -1,11 +1,13 @@
 import classNames from 'classnames';
 import { Component } from 'inferno';
+import authService from '../../common/services/auth.service';
 import { Breadcrumb, createBreadcrumbs } from '../../utils/component-helpers';
 import { toggleClassesOnInteract } from '../../utils/css';
 export interface HeaderOptions {
 	back?: boolean;
 	menu?: boolean;
 	breadcrumbs?: boolean;
+	loggedin?: boolean;
 	buttons?: JSX.Element[];
 	textColor?: string;
 	backgroundColor?: string;
@@ -49,6 +51,11 @@ export class PageComponent extends Component<PageProps, PageState> {
 		this.props.history.goBack();
 	}
 
+	public logout() {
+		authService.logout();
+		this.gotoUrl('/auth');
+	}
+
 	public toggleMenu = () => {
 		this.hamburgerEl.classList.toggle('is-active');
 		this.menuEl.classList.toggle('is-active');
@@ -60,6 +67,7 @@ export class PageComponent extends Component<PageProps, PageState> {
 			backgroundColor: 'info',
 			breadcrumbs: true,
 			buttons: [],
+			loggedin: authService.isAuthenticated(),
 			menu: true,
 			textColor: 'white',
 			title: 'Default'
@@ -83,6 +91,7 @@ export class PageComponent extends Component<PageProps, PageState> {
 		const backIconClassNames = classNames('icon', {'is-invisible': !options.back });
 		const hamburgerClassNames = classNames('navbar-burger has-text-white', { 'is-invisible': !options.menu });
 		const navItemClassNames = classNames('has-text-white has-text-info-mobile navbar-item', { 'is-invisible': !options.menu});
+		const logoutClassNames = classNames('has-text-white has-text-info-mobile navbar-item', { 'is-invisible': !options.menu, 'is-hidden': !options.loggedin});
 		return (
 			<nav class={`navbar has-text-${options.textColor} has-background-${options.backgroundColor}`} role="navigation" aria-label="main navigation">
 				<div class="navbar-brand">
@@ -101,7 +110,7 @@ export class PageComponent extends Component<PageProps, PageState> {
 					<div class="navbar-start m-l-auto">
 						<a ref={(node) => this.onNavbarItemRef(node) } role="button" className={navItemClassNames} onClick={(e) => this.gotoUrl('/lists') } >Lists</a>
 						<h1 class="title has-text-white has-text-info-mobile navbar-item is-hidden-mobile is-marginless">Random That</h1>
-						<a style={{ visibility: 'hidden' }} class="has-text-white has-text-info-mobile navbar-item is-hidden-mobile">Lists</a>
+						<a ref={(node) => this.onNavbarItemRef(node) } role="button" className={logoutClassNames} onClick={(e) => this.logout() } >Logout</a>
 					</div>
 				</div>
 			</nav>
