@@ -4,6 +4,7 @@ import authService from '../../common/services/auth.service';
 import { Breadcrumb, createBreadcrumbs } from '../../utils/component-helpers';
 import { toggleClassesOnInteract } from '../../utils/css';
 export interface HeaderOptions {
+	auth?: boolean;
 	back?: boolean;
 	menu?: boolean;
 	breadcrumbs?: boolean;
@@ -21,6 +22,8 @@ interface PageProps {
 
 interface PageState {
 	breadcrumbs: Breadcrumb[];
+	isAuthenticated: boolean;
+	loading: boolean;
 }
 
 export class PageComponent extends Component<PageProps, PageState> {
@@ -30,12 +33,15 @@ export class PageComponent extends Component<PageProps, PageState> {
 
 	constructor(props) {
 		super(props);
-		this.state = { breadcrumbs: [] };
+		// this.state = { breadcrumbs: [], isAuthenticated: authService.isAuthenticated() };
+		this.state = { breadcrumbs: [], isAuthenticated: false, loading: true };
 	}
 
 	public async componentWillMount() {
 		const breadcrumbs: Breadcrumb[] = await createBreadcrumbs(window.location.pathname);
-		this.setState({breadcrumbs});
+		// this.setState({breadcrumbs});
+		const isAuthenticated: boolean = await authService.isAuthenticatedAsync();
+		this.setState({breadcrumbs, isAuthenticated, loading: false});
 	}
 
 	public onNavbarItemRef = (node) => {
@@ -63,35 +69,39 @@ export class PageComponent extends Component<PageProps, PageState> {
 
 	public render(nextProps: PageProps, nextState: PageState, nextContext: any) {
 		const defaultOptions: HeaderOptions = {
+			auth: true,
 			back: true,
 			backgroundColor: 'info',
 			breadcrumbs: true,
 			buttons: [],
-			loggedin: authService.isAuthenticated(),
 			menu: true,
 			textColor: 'white',
 			title: 'Default'
 		};
 		const options = Object.assign({}, defaultOptions, nextProps.headerOptions);
+		if (!nextState.loading && !nextState.isAuthenticated && options.auth) {
+			nextProps.history.push('/auth');
+		}
 		return (
 			<div>
-				{ this.renderHeader(options) }
+				{ this.renderHeader(options, nextState) }
 				{ this.renderBreadcrumbs(options, nextState)}
 				<div class="container is-hidden-mobile m-b-xs">
 					<h1 class="title is-capitalized">{nextProps.headerOptions.title}</h1>
 				</div>
 				<div class="container">
-					{this.props.children}
+					{ nextState.loading ? <div class="is-loading"></div> : this.props.children }
+					{/* { nextState.loading ? <div></div> : this.props.children } */}
 				</div>
 			</div>
 		);
 	}
 
-	private renderHeader(options: HeaderOptions) {
+	private renderHeader(options: HeaderOptions, state: PageState) {
 		const backIconClassNames = classNames('icon', {'is-invisible': !options.back });
 		const hamburgerClassNames = classNames('navbar-burger has-text-white', { 'is-invisible': !options.menu });
 		const navItemClassNames = classNames('has-text-white has-text-info-mobile navbar-item', { 'is-invisible': !options.menu});
-		const logoutClassNames = classNames('has-text-white has-text-info-mobile navbar-item', { 'is-invisible': !options.menu, 'is-hidden': !options.loggedin});
+		const logoutClassNames = classNames('has-text-white has-text-info-mobile navbar-item', { 'is-invisible': !options.menu, 'is-hidden': !state.isAuthenticated });
 		return (
 			<nav class={`navbar has-text-${options.textColor} has-background-${options.backgroundColor}`} role="navigation" aria-label="main navigation">
 				<div class="navbar-brand">

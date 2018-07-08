@@ -65,7 +65,7 @@ export default class AuthPage extends BaseComponent<Props, State> {
 		const submitClassNames = classNames('m-t-sm', 'button', 'is-success', 'is-flex-basis-100-mobile');
 		const errorClassNames = classNames('notification is-danger', {'is-hidden': !nextState.error });
 		return (
-			<PageComponent history={this.props.history} headerOptions={{ title: nextState.action, back: false, menu: false, breadcrumbs: false }}>
+			<PageComponent history={this.props.history} headerOptions={{ title: nextState.action, back: false, menu: false, breadcrumbs: false, auth: false }}>
 				<div className={errorClassNames}>
 					<button onClick={this.closeError} class="delete"></button>
 					{nextState.error}
