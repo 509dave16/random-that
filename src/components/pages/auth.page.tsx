@@ -50,7 +50,7 @@ export default class AuthPage extends BaseComponent<Props, State> {
 	public render(nextProps: Props, nextState: State, nextContext: any) {
 		const submitClassNames = classNames('m-t-sm', 'button', 'is-success', 'is-flex-basis-100-mobile');
 		return (
-			<PageComponent history={this.props.history} headerOptions={{ title: nextState.action, menu: false, breadcrumbs: false }}>
+			<PageComponent history={this.props.history} headerOptions={{ title: nextState.action, back: false, menu: false, breadcrumbs: false }}>
 				<nav class="panel">
 					<p class="panel-tabs">
 						<a onClick={(e) => this.setAction(ACTION_LOGIN)}class={nextState.action === ACTION_LOGIN ? 'is-active' : ''}>Login</a>
