@@ -82,7 +82,8 @@ export default class ListPage extends BaseComponent<Props, State> {
 
 	public confirmRandomItem(state) {
 		state.randomItem.done = true;
-		const items = state.items.map((item) => ({ ...item }));
+		// const items = state.items.map((item) => ({ ...item }));
+		const items = state.items.map((item) => item);
 		this.setState({ items, randomItem: { ...emptyItem }});
 		this.toggleRandomThatModal();
 	}
