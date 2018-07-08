@@ -4,6 +4,7 @@ import AuthPage from './components/pages/auth.page';
 import ItemPage from './components/pages/item.page';
 import ListPage from './components/pages/list.page';
 import ListsPage from './components/pages/lists.page';
+import { PrivateRoute } from './components/routes/private.route';
 import './main.sass';
 const container = document.getElementById('app');
 
@@ -13,16 +14,15 @@ class MyComponent extends Component {
 	}
 
 	public render() {
-		const defaultPath = true ? '/auth' : '/lists';
 		return (
 			<BrowserRouter>
 				<div>
 					<Switch>
-						<Route path="/lists/:listId/items/:itemId" component={ItemPage} />
-						<Route path="/lists/:listId" component={ListPage} />
-						<Route path="/lists" component={ListsPage} />
+						<PrivateRoute path="/lists/:listId/items/:itemId" component={ItemPage} />
+						<PrivateRoute path="/lists/:listId" component={ListPage} />
+						<PrivateRoute path="/lists" component={ListsPage} />
 						<Route path="/auth" component={AuthPage} />
-						<Redirect from="/" to={defaultPath} />
+						<Redirect from="/" to="/lists" />
 					</Switch>
 				</div>
 			</BrowserRouter>

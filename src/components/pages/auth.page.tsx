@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { Redirect } from 'inferno-router';
 import { BaseComponent } from '../../common/classes/base.component';
 import { default as authService, FriendlyResponse, STATUS_SUCCESS } from '../../common/services/auth.service';
 import { PageComponent } from '../layout/page.component';
@@ -14,7 +15,7 @@ interface Props {
 	location: any;
 }
 // tslint:disable-next-line
-interface State { profile: Profile, updating: boolean, action: string }
+interface State { profile: Profile, updating: boolean, action: string, redirectToReferrer: boolean, error: string }
 
 const ACTION_LOGIN = 'login';
 const ACTION_REGISTER = 'register';
@@ -24,23 +25,30 @@ export default class AuthPage extends BaseComponent<Props, State> {
 
 	constructor(props) {
 		super(props);
-		this.state = { profile: { ...emptyProfile }, updating: false, action: ACTION_LOGIN};
+		this.state = { profile: { ...emptyProfile }, updating: false, action: ACTION_LOGIN, redirectToReferrer: false, error: ''};
 	}
 
 	public async handleAuth(state: State) {
 		if (state.updating) {
-			return; // don't perform again
+			return;
 		}
 		let profile: Profile = state.profile;
-		const response: FriendlyResponse = await authService[state.action](profile);
-		console.log(response.message);
-		if (response.status === STATUS_SUCCESS) {
-			profile = {... emptyProfile};
+		let error: string = '';
+		try {
+			const response: FriendlyResponse = await authService[state.action](profile);
+			if (response.status === STATUS_SUCCESS) {
+				this.setState({ redirectToReferrer: true });
+				this.props.history.push('/lists');
+			}
+		} catch (e) {
+			error = e.message || 'Error thrown';
+			profile = { ...emptyProfile };
 		}
-		this.setState({ updating: false, profile });
-		if (response.status === STATUS_SUCCESS) {
-			this.props.history.push('/lists');
-		}
+		this.setState({ updating: false, profile, error });
+	}
+
+	public closeError = () => {
+		this.setState({ error: ''});
 	}
 
 	public setAction(action: string) {
@@ -48,9 +56,20 @@ export default class AuthPage extends BaseComponent<Props, State> {
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {
+		const from = nextProps.location.from || '/';
+		const { redirectToReferrer } = nextState;
+
+		if (redirectToReferrer) {
+			return <Redirect to={from} />;
+		}
 		const submitClassNames = classNames('m-t-sm', 'button', 'is-success', 'is-flex-basis-100-mobile');
+		const errorClassNames = classNames('notification is-danger', {'is-hidden': !nextState.error });
 		return (
 			<PageComponent history={this.props.history} headerOptions={{ title: nextState.action, back: false, menu: false, breadcrumbs: false }}>
+				<div className={errorClassNames}>
+					<button onClick={this.closeError} class="delete"></button>
+					{nextState.error}
+				</div>
 				<nav class="panel">
 					<p class="panel-tabs">
 						<a onClick={(e) => this.setAction(ACTION_LOGIN)}class={nextState.action === ACTION_LOGIN ? 'is-active' : ''}>Login</a>
@@ -74,9 +93,6 @@ export default class AuthPage extends BaseComponent<Props, State> {
 						</a>
 					</div>
 				</nav>
-				<div class="panel">
-
-				</div>
 			</PageComponent>
 		);
 	}
