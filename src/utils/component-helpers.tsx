@@ -1,3 +1,7 @@
+import { Item } from '../common/interfaces/item.interface';
+import { List } from '../common/interfaces/list.interface';
+import listService from '../common/services/list.service';
+
 // NOTE: Do not use. Will not work for showing state changes to value
 export function handleInputHoc() {
 	return function(propName: string, event: any) {
@@ -56,4 +60,39 @@ export function handleFormSubmitHoc() {
 		e.preventDefault();
 		callback();
 	};
+}
+
+export interface Breadcrumb {
+	name: string;
+	path: string;
+}
+
+export async function createBreadcrumbs(path: string): Promise<Breadcrumb[]> {
+	const parts: string[] = path.split('/');
+	const breadcrumbs: Breadcrumb[] = [];
+	let subPath = '';
+	let prevPart = '';
+	for (const part of parts) {
+		let name = part;
+		if (part) {
+			if (prevPart) {
+				name = await getCrumbName(prevPart, part);
+			}
+			subPath += '/' + part;
+			prevPart = part;
+		}
+		breadcrumbs.push({ name,  path: subPath});
+	}
+	return breadcrumbs;
+}
+
+export async function getCrumbName(type: string, value: string): Promise<string> {
+	if (type === 'lists') {
+		const list: List|undefined = await listService.getList(value);
+		return list ? list.name : '';
+	} else if (type === 'items') {
+		const item: Item|undefined = await listService.getItem(value);
+		return item ? item.name : '';
+	}
+	return value;
 }

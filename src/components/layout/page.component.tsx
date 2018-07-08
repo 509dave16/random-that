@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { Component } from 'inferno';
+import { Breadcrumb, createBreadcrumbs } from '../../utils/component-helpers';
 import { toggleClassesOnInteract } from '../../utils/css';
 export interface HeaderOptions {
 	back?: boolean;
@@ -9,15 +10,29 @@ export interface HeaderOptions {
 	title: string;
 }
 
-export interface PageProps {
+interface PageProps {
 	history: any;
 	headerOptions: HeaderOptions;
 }
 
-export class PageComponent extends Component<PageProps, {}> {
+interface PageState {
+	breadcrumbs: Breadcrumb[];
+}
+
+export class PageComponent extends Component<PageProps, PageState> {
 
 	public hamburgerEl: any;
 	public menuEl: any;
+
+	constructor(props) {
+		super(props);
+		this.state = { breadcrumbs: [] };
+	}
+
+	public async componentWillMount() {
+		const breadcrumbs: Breadcrumb[] = await createBreadcrumbs(window.location.pathname);
+		this.setState({breadcrumbs});
+	}
 
 	public onNavbarItemRef = (node) => {
 		toggleClassesOnInteract(node, ['has-text-info']);
@@ -37,10 +52,11 @@ export class PageComponent extends Component<PageProps, {}> {
 		this.menuEl.classList.toggle('is-active');
 	}
 
-	public render(nextProps: PageProps, nextState: {}, nextContext: any) {
+	public render(nextProps: PageProps, nextState: PageState, nextContext: any) {
 		return (
 			<div>
-				{ this.createHeader(nextProps.headerOptions) }
+				{ this.renderHeader(nextProps.headerOptions) }
+				{ this.renderBreadcrumbs(nextState)}
 				<div class="container is-hidden-mobile">
 					<h1 class="title">{nextProps.headerOptions.title}</h1>
 				</div>
@@ -51,7 +67,7 @@ export class PageComponent extends Component<PageProps, {}> {
 		);
 	}
 
-	private createHeader(headerOptions: HeaderOptions) {
+	private renderHeader(headerOptions: HeaderOptions) {
 		const defaultOptions: HeaderOptions = {
 			back: true,
 			backgroundColor: 'info',
@@ -82,6 +98,22 @@ export class PageComponent extends Component<PageProps, {}> {
 						<a style={{ visibility: 'hidden' }} class="has-text-white has-text-info-mobile navbar-item is-hidden-mobile">Lists</a>
 					</div>
 				</div>
+			</nav>
+		);
+	}
+
+	private renderBreadcrumbs(nextState: PageState) {
+		return (
+			<nav class="breadcrumb" aria-label="breadcrumbs">
+				<ul>
+					{
+						nextState.breadcrumbs.map((crumb: Breadcrumb, index: number, breadcrumbs: Breadcrumb[]) => {
+							const isActive = index === breadcrumbs.length - 1;
+							const crumbClassNames = classNames({ 'is-active': isActive});
+							return (<li className={crumbClassNames}><a role="button" onClick={(e) => this.gotoUrl(crumb.path)}>{crumb.name}</a></li>);
+						})
+					}
+				</ul>
 			</nav>
 		);
 	}
