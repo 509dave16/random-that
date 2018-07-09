@@ -8,12 +8,14 @@ export class PrivateRoute extends Component<any, any> {
 		this.state = { isAuthenticated: authService.isAuthenticated(), loading: true };
 	}
 	public async componentWillMount(): Promise<any> {
-		// const isAuthenticated = await authService.isAuthenticatedAsync();
-		// this.setState({ isAuthenticated, loading: false });
-		this.setState({ loading: false });
+		const isAuthenticated = await authService.isAuthenticatedAsync();
+		this.setState({ isAuthenticated, loading: false });
 	}
 	public render({ component, ...rest }, nextState, nextContext: any) {
 		const TargetComponent = component;
+		if (nextState.loading) {
+			return <div class="is-loading"></div>;
+		}
 		if (!nextState.isAuthenticated) {
 			authService.setReferrer(rest.path);
 		}
