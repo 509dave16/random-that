@@ -4,7 +4,7 @@ import AuthPage from './components/pages/auth.page';
 import ItemPage from './components/pages/item.page';
 import ListPage from './components/pages/list.page';
 import ListsPage from './components/pages/lists.page';
-import { PrivateRoute } from './components/routes/private.route';
+// import { PrivateRoute } from './components/routes/private.route';
 import './main.sass';
 const container = document.getElementById('app');
 
@@ -18,9 +18,9 @@ class MyComponent extends Component {
 			<BrowserRouter>
 				<div>
 					<Switch>
-						<PrivateRoute path="/lists/:listId/items/:itemId" component={ItemPage} />
-						<PrivateRoute path="/lists/:listId" component={ListPage} />
-						<PrivateRoute path="/lists" component={ListsPage} />
+						<Route path="/lists/:listId/items/:itemId" component={ItemPage} />
+						<Route path="/lists/:listId" component={ListPage} />
+						<Route path="/lists" component={ListsPage} />
 						<Route path="/auth" component={AuthPage} />
 						<Redirect from="/" to="/lists" />
 					</Switch>

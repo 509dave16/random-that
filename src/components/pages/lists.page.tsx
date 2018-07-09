@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { BaseComponent } from '../../common/classes/base.component';
 import { emptyList } from '../../common/data/mocks';
 import { List } from '../../common/interfaces/list.interface';
+import { gunUser } from '../../common/services/gun.service';
 import listService from '../../common/services/list.service';
 import { toggleClassesOnHover, toggleClassesOnInteract } from '../../utils/css';
 import { PageComponent } from '../layout/page.component';
@@ -73,6 +74,17 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		this.setState({ lists });
 	}
 
+	public async doGunThing() {
+		const is = gunUser.is;
+		console.log(is);
+		const res = await gunUser.alive();
+		console.log(res);
+		gunUser.get('profile').on((data) => {
+			console.log(data);
+		});
+		// gunUser.get('profile').put({ crappy: 'shit'});
+	}
+
 	public render(nextProps: Props, nextState: State, nextContext: any) {
 		const listFormClassNames = classNames('m-t-sm', {'is-hidden': nextState.listFormIsHidden});
 		const addListClassNames = classNames('is-flex-basis-100-mobile', 'm-t-sm', 'button', 'is-info', {'is-hidden': nextState.addListIsHidden});
@@ -117,6 +129,9 @@ export default class ListsPage extends BaseComponent<Props, State> {
 							<ion-icon color="white" size="large" name="add"></ion-icon>
 						</span>
 						<span>Add List</span>
+					</a>
+					<a onClick={(e) => { this.doGunThing(); }} className={addListClassNames}>
+						Fire Gun
 					</a>
 				</div>
 			</PageComponent>
