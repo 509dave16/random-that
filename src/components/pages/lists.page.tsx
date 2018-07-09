@@ -46,12 +46,15 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		return { newList: { ...emptyList }, addListIsHidden: !state.addListIsHidden, listFormIsHidden: !state.listFormIsHidden };
 	}
 
+	public async clearLists() {
+		await listService.clearLists();
+	}
+
 	public async createList(state: State) {
 		if (state.waiting) {
 			return; // don't perform again
 		}
 		const list: List = state.newList;
-		list.id += Math.floor(Math.random() * 10000);
 		this.setState({ waiting: true });
 		await listService.saveList(list);
 		const lists: List[] = state.lists;
@@ -64,13 +67,17 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		const list: List|undefined = await listService.deleteList(listId);
 		if (list) {
 			const lists = await listService.getLists();
+			console.log(lists);
 			this.setState({ lists });
 		}
 	}
 
 	public async componentWillMount() {
-		const lists: List[] = await listService.getLists();
-		this.setState({ lists });
+		console.log('getting lists');
+		listService.getLists().then((lists: List[]) => {
+			console.log('here');
+			this.setState({ lists });
+		});
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {
@@ -117,6 +124,9 @@ export default class ListsPage extends BaseComponent<Props, State> {
 							<ion-icon color="white" size="large" name="add"></ion-icon>
 						</span>
 						<span>Add List</span>
+					</a>
+					<a onClick={(e) => { this.clearLists(); }} className={addListClassNames}>
+						<span>Clear Lists</span>
 					</a>
 				</div>
 			</PageComponent>

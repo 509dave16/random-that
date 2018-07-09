@@ -33,14 +33,18 @@ export class PageComponent extends Component<PageProps, PageState> {
 
 	constructor(props) {
 		super(props);
-		this.state = { breadcrumbs: [], isAuthenticated: false, loading: true };
+		// this.state = { breadcrumbs: [], isAuthenticated: false, loading: true };
+		this.state = { breadcrumbs: [], isAuthenticated: true, loading: false };
 	}
 
 	public async componentWillMount() {
 		const breadcrumbs: Breadcrumb[] = await createBreadcrumbs(window.location.pathname);
+		// const isAuthenticated: boolean = await authService.isAuthenticatedAsync();
+		// if (isAuthenticated) {
+		// 	await authService.loadData();
+		// }
+		// this.setState({breadcrumbs, isAuthenticated, loading: false});
 		this.setState({breadcrumbs});
-		const isAuthenticated: boolean = await authService.isAuthenticatedAsync();
-		this.setState({breadcrumbs, isAuthenticated, loading: false});
 	}
 
 	public onNavbarItemRef = (node) => {

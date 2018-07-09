@@ -1,0 +1,22 @@
+	// public componentDidMount() {
+	// 	console.log('here');
+	// }
+	// public componentWillUnmount() {
+	// 	console.log('here');
+	// }
+	// public componentDidUnmount() {
+	// 	console.log('here');
+	// }
+	// public componentWillReceiveProps() {
+	// 	console.log('here');
+	// }
+	// public shouldComponentUpdate(nextProps: Props, nextState: State, nextContext: any) {
+	// 	console.log('here');
+	// 	return true;
+	// }
+	// public componentWillUpdate() {
+	// 	console.log('here');
+	// }
+	// public componentDidUpdate() {
+	// 	console.log('here');
+	// }
