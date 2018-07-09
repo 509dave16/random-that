@@ -17,18 +17,30 @@ class AuthService {
 	private referrer: string = '/';
 
 	public async isAuthenticatedAsync(): Promise<boolean> {
+		// 1. First check if session is alive
+		try {
+			await gunUser.alive();
+			return Promise.resolve(true);
+		} catch (e) {
+			console.log(e);
+		}
+
+		// 2. Check if auth credentials were stored
 		const profileStr: string|null = sessionStorage.getItem(AUTH_SESSION_KEY);
 		if (!profileStr) {
 			return Promise.resolve(false);
 		}
+		// 3. Check if they are correct
 		const profileParts = profileStr.split(':');
 		const profile: Profile = { username: profileParts[0], password: profileParts[1]};
 		try {
 			await this.login(profile);
 			return Promise.resolve(true);
 		} catch (e) {
-			return Promise.resolve(false);
+			console.log(e);
 		}
+		// 4. If all else fails then we're doomed
+		return Promise.resolve(false);
 	}
 
 	public isAuthenticated(): boolean {
@@ -74,7 +86,9 @@ class AuthService {
 		});
 	}
 
-	public logout() {
+	public async logout() {
+		const result = await gunUser.leave();
+		console.log(result);
 		this.setAuthenticated('');
 	}
 }

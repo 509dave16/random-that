@@ -33,13 +33,12 @@ export class PageComponent extends Component<PageProps, PageState> {
 
 	constructor(props) {
 		super(props);
-		// this.state = { breadcrumbs: [], isAuthenticated: authService.isAuthenticated() };
 		this.state = { breadcrumbs: [], isAuthenticated: false, loading: true };
 	}
 
 	public async componentWillMount() {
 		const breadcrumbs: Breadcrumb[] = await createBreadcrumbs(window.location.pathname);
-		// this.setState({breadcrumbs});
+		this.setState({breadcrumbs});
 		const isAuthenticated: boolean = await authService.isAuthenticatedAsync();
 		this.setState({breadcrumbs, isAuthenticated, loading: false});
 	}
@@ -57,8 +56,8 @@ export class PageComponent extends Component<PageProps, PageState> {
 		this.props.history.goBack();
 	}
 
-	public logout() {
-		authService.logout();
+	public async logout() {
+		await authService.logout();
 		this.gotoUrl('/auth');
 	}
 
@@ -91,7 +90,6 @@ export class PageComponent extends Component<PageProps, PageState> {
 				</div>
 				<div class="container">
 					{ nextState.loading ? <div class="is-loading"></div> : this.props.children }
-					{/* { nextState.loading ? <div></div> : this.props.children } */}
 				</div>
 			</div>
 		);
