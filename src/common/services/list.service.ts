@@ -1,7 +1,7 @@
 // import { items, lists } from '../data/mocks';
 import { Item } from '../interfaces/item.interface';
 import { List } from '../interfaces/list.interface';
-import { gun } from './gun.service';
+import { gunUser, gun } from './gun.service';
 import uuid from 'uuid/v4';
 
 class ListService {
@@ -14,8 +14,8 @@ class ListService {
 	}
 
 	public async getList(listId: string): Promise<List|undefined> {
-		const listsNode = await this.getListsNode();
-		const list = await listsNode.get(listId).load();
+		const { node } = await this.getListsNode();
+		const list = await node.get(listId).load().then();
 		return list;
 	}
 
@@ -28,8 +28,8 @@ class ListService {
 	}
 
 	public async clearLists(): Promise<any> {
-		const listsNode = await this.getListsNode();
-		return listsNode.put(null).then();
+		const { node } = await this.getListsNode();
+		return node.put(null).then();
 	}
 
 	public async getListItems(listId: string): Promise<Item[]> {
@@ -38,8 +38,8 @@ class ListService {
 	}
 
 	public async getItem(itemId: string): Promise<Item|undefined> {
-		const itemsNode = await this.getItemsNode();
-		const item = await itemsNode.get(itemId).load().then();
+		const { node } = await this.getItemsNode();
+		const item = await node.get(itemId).load().then();
 		return item;
 	}
 
@@ -47,8 +47,8 @@ class ListService {
 		if (!updatedList.id) {
 			updatedList.id = uuid();
 		}
-		const listsNode = await this.getListsNode();
-		await listsNode.get(updatedList.id).put(updatedList).then();
+		const { node } = await this.getListsNode();
+		await node.get(updatedList.id).put(updatedList).then();
 		return updatedList;
 	}
 
@@ -56,52 +56,56 @@ class ListService {
 		if (!updatedItem.id) {
 			updatedItem.id = uuid();
 		}
-		const itemsNode = await this.getItemsNode();
-		await itemsNode.get(updatedItem.id).put(updatedItem).then();
+		const { node } = await this.getItemsNode();
+		await node.get(updatedItem.id).put(updatedItem).then();
 	}
 
 	public async deleteList(listId: string): Promise<any> {
-		const listsNode = await this.getListsNode();
-		return listsNode.get(listId).put(null).then();
+		const { node } = await this.getListsNode();
+		return node.get(listId).put(null).then();
 	}
 
 	public async deleteItem(itemId: string): Promise<Item> {
-		const itemsNode = await this.getItemsNode();
-		return itemsNode.get(itemId).put(null).then();
+		const { node } = await this.getItemsNode();
+		return node.get(itemId).put(null).then();
 	}
 
 	private getNode(path: string, at?: any): any {
+		// let node = gunUser.get(path);
+		let node = gun.get(path);
+		console.log(gunUser);
 		if (at) {
-			return at.get(path);
+			node = at.get(path);
 		}
-		return gun.user().get(path);
+		return { node };
 	}
 
 	private async isNodeSet(path: string, at?: any): Promise<boolean> {
-		let node = this.getNode(path);
+		let nodeObj = this.getNode(path);
 		if (at) {
-			node = this.getNode(path, at);
+			nodeObj = this.getNode(path, at);
 		}
-		const result = await node.once().then();
-		return result !== undefined;
+		const { node } = nodeObj;
+		const result = await node.once().promise();
+		return result.put !== undefined;
 	}
 
 	private async initCollectionNodeMetadata(path): Promise<any> {
-		const node = this.getNode(path);
+		const nodeObj = this.getNode(path);
+		const { node } = nodeObj;
 		return node.put({ metadata : { type: 'collection'}}).then();
 	}
 
 	private async getCollectionNodeData(path): Promise<any[]> {
-		const collectionNode = await this.getCollectionNode(path);
-		const dumpOnMe = 1;
-		console.log(dumpOnMe);
-		const nodeData = await collectionNode.load().then();
+		const { node } = await this.getCollectionNode(path);
 		const collection: any[] = [];
-		for (const index in nodeData) {
+		const indexes = await node.once().then();
+		for (const index in indexes) {
 			if (index === '_' || index === 'metadata') {
 				continue;
 			}
-			collection.push(nodeData[index]);
+			const data = await node.get(index).load().then();
+			collection.push(data);
 		}
 		return collection;
 	}

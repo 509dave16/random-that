@@ -73,11 +73,8 @@ export default class ListsPage extends BaseComponent<Props, State> {
 	}
 
 	public async componentWillMount() {
-		console.log('getting lists');
-		listService.getLists().then((lists: List[]) => {
-			console.log('here');
-			this.setState({ lists });
-		});
+		const lists = await listService.getLists();
+		this.setState({ lists });
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {
