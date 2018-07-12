@@ -19,6 +19,7 @@ export interface HeaderOptions {
 interface PageProps {
 	history: any;
 	headerOptions: HeaderOptions;
+	onAuthenticated?: Function;
 }
 
 interface PageState {
@@ -41,6 +42,7 @@ export class PageComponent extends Component<PageProps, PageState> {
 		const breadcrumbs: Breadcrumb[] = await createBreadcrumbs(window.location.pathname);
 		const response = await authService.isAuthenticated();
 		const isAuthenticated = response.status === STATUS_SUCCESS;
+		this.props.onAuthenticated ? this.props.onAuthenticated(isAuthenticated) : console.log('no auth hook');
 		this.setState({breadcrumbs, isAuthenticated, loading: false});
 	}
 

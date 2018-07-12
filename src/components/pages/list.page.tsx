@@ -21,6 +21,7 @@ interface State {
 	randomItem: Item;
 	itemFormIsHidden: boolean;
 	actionItemsHidden: boolean;
+	isAuthenticated: boolean;
 }
 
 export default class ListPage extends BaseComponent<Props, State> {
@@ -28,10 +29,14 @@ export default class ListPage extends BaseComponent<Props, State> {
 
 	constructor(props) {
 		super(props);
-		this.state = { randomItem: { ...emptyItem }, items: [], list: { id: '0', name: ''}, newItem: { ...emptyItem } , itemFormIsHidden: true, actionItemsHidden: false, waiting: false };
+		this.state = { randomItem: { ...emptyItem }, items: [], list: { id: '0', name: ''}, newItem: { ...emptyItem } , isAuthenticated: false, itemFormIsHidden: true, actionItemsHidden: false, waiting: false };
 	}
 
-	public async componentWillMount() {
+	public loadList = async (isAuthenticated) => {
+		this.setState({ isAuthenticated });
+		if (!isAuthenticated) {
+			return;
+		}
 		const { params } = this.props.match;
 		const list: List|undefined = await listService.getList(params.listId);
 		if (!list) {
@@ -136,9 +141,6 @@ export default class ListPage extends BaseComponent<Props, State> {
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {
-		if (!nextState.list) {
-			return <div>List is missing</div>;
-		}
 		const itemFormClassNames = classNames('m-t-sm', {'is-hidden': nextState.itemFormIsHidden});
 		const actionItemClassNames = classNames('is-flex-basis-100-mobile', 'is-m-r-0-mobile', 'm-t-sm', 'm-r-sm', 'button', 'is-info', {'is-hidden': nextState.actionItemsHidden});
 		const createItemClassNames = classNames('button', 'is-success', 'm-r-sm', { isLoading: nextState.waiting });
@@ -146,71 +148,75 @@ export default class ListPage extends BaseComponent<Props, State> {
 		const skipRandomItemClassNames = classNames('button', 'is-info', 'm-r-sm', { isLoading: nextState.waiting });
 		const cancelRandomItemClassNames = classNames('button', 'is-danger', { isLoading: nextState.waiting });
 		return (
-			<PageComponent history={this.props.history} headerOptions={{ title: nextState.list.name }}>
-				<div class="list">
-					{
-						nextState.items.map((item: Item) => {
-							return (
-								<div class="list-item ripple" onClick={(e: Event) => this.navigate(e, item.id)} ref={ (node) => this.onListItemRef(node)}>
-									<div class="level">
-										<div class="level-left"><span className={this.getItemClasses(item)}><ion-icon color="success" name="checkbox"></ion-icon></span>{item.name}</div>
-										<div class="level-right">
-											<a onClick={(e) => this.deleteItem(e, item.id)} ref={(node) => this.onTrashRef(node) }><ion-icon name="trash" color="danger"></ion-icon></a>
-											<ion-icon mode="ios" name="arrow-forward"></ion-icon>
+			<PageComponent onAuthenticated={this.loadList} history={this.props.history} headerOptions={{ title: nextState.list.name }}>
+				{ nextState.isAuthenticated ? (<div>
+					<div class="list">
+						{
+							nextState.items.map((item: Item) => {
+								return (
+									<div class="list-item ripple" onClick={(e: Event) => this.navigate(e, item.id)} ref={ (node) => this.onListItemRef(node)}>
+										<div class="level">
+											<div class="level-left"><span className={this.getItemClasses(item)}><ion-icon color="success" name="checkbox"></ion-icon></span>{item.name}</div>
+											<div class="level-right">
+												<a onClick={(e) => this.deleteItem(e, item.id)} ref={(node) => this.onTrashRef(node) }><ion-icon name="trash" color="danger"></ion-icon></a>
+												<ion-icon mode="ios" name="arrow-forward"></ion-icon>
+											</div>
 										</div>
 									</div>
-								</div>
-							);
-						})
-					}
-				</div>
-				<div className={itemFormClassNames}>
-					<div class="field">
-						<p class="control has-icons-left">
-							<input value={nextState.newItem.name} onInput={(e: Event) => this.handleStateInput('newItem.name', e)} class="input" type="text" placeholder="Item Name" />
-							<span class="icon is-small is-left">
-								<ion-icon color="primary" name="list-box"></ion-icon>
+								);
+							})
+						}
+					</div>
+					<div className={itemFormClassNames}>
+						<div class="field">
+							<p class="control has-icons-left">
+								<input value={nextState.newItem.name} onInput={(e: Event) => this.handleStateInput('newItem.name', e)} class="input" type="text" placeholder="Item Name" />
+								<span class="icon is-small is-left">
+									<ion-icon color="primary" name="list-box"></ion-icon>
+								</span>
+							</p>
+						</div>
+						<div style="display: flex; justify-content: center;">
+							<button onClick={(e: Event) => this.createItem(nextState) } className={createItemClassNames}>Submit</button>
+							<button onClick={ (e: Event) => this.toggleCreateItem(nextState) }class="button is-danger">Cancel</button>
+						</div>
+					</div>
+					<div class="is-flex is-flex-wrap-mobile">
+						<a onClick={(e) => { this.toggleCreateItem(nextState); }} className={actionItemClassNames}>
+							<span class="icon">
+								<ion-icon color="white" size="large" name="add"></ion-icon>
 							</span>
-						</p>
+							<span>Add Item</span>
+						</a>
+						<a onClick={(e) => { this.randomThat(nextState); }} className={actionItemClassNames}>
+							<span class="icon">
+								<ion-icon size="large" color="white" name="shuffle"></ion-icon>
+							</span>
+							<span>Random That</span>
+						</a>
 					</div>
-					<div style="display: flex; justify-content: center;">
-						<button onClick={(e: Event) => this.createItem(nextState) } className={createItemClassNames}>Submit</button>
-						<button onClick={ (e: Event) => this.toggleCreateItem(nextState) }class="button is-danger">Cancel</button>
-					</div>
-				</div>
-				<div class="is-flex is-flex-wrap-mobile">
-					<a onClick={(e) => { this.toggleCreateItem(nextState); }} className={actionItemClassNames}>
-						<span class="icon">
-							<ion-icon color="white" size="large" name="add"></ion-icon>
-						</span>
-						<span>Add Item</span>
-					</a>
-					<a onClick={(e) => { this.randomThat(nextState); }} className={actionItemClassNames}>
-						<span class="icon">
-							<ion-icon size="large" color="white" name="shuffle"></ion-icon>
-						</span>
-						<span>Random That</span>
-					</a>
-				</div>
-				<div ref={(node) => this.randomThatModalReference(node) } class="modal">
-					<div class="modal-background"></div>
-					<div class="modal-content">
-					<article class="message">
-						<div class="message-header">
-							<p>Random {nextState.list.name}</p>
-						</div>
-						<div class="message-body">
-						<h4>{ nextState.randomItem.name }</h4>
-							<div style="display: flex; justify-content: center;">
-								<button onClick={(e: Event) => this.confirmRandomItem(nextState) } className={confirmRandomItemClassNames}>Confirm</button>
-								<button onClick={(e: Event) => this.nextRandomThat(nextState) } className={skipRandomItemClassNames}>Skip</button>
-								<button onClick={ (e: Event) => this.cancelRandomItem(nextState) }className={cancelRandomItemClassNames}>Cancel</button>
+					<div ref={(node) => this.randomThatModalReference(node) } class="modal">
+						<div class="modal-background"></div>
+						<div class="modal-content">
+						<article class="message">
+							<div class="message-header">
+								<p>Random {nextState.list.name}</p>
 							</div>
+							<div class="message-body">
+							<h4>{ nextState.randomItem.name }</h4>
+								<div style="display: flex; justify-content: center;">
+									<button onClick={(e: Event) => this.confirmRandomItem(nextState) } className={confirmRandomItemClassNames}>Confirm</button>
+									<button onClick={(e: Event) => this.nextRandomThat(nextState) } className={skipRandomItemClassNames}>Skip</button>
+									<button onClick={ (e: Event) => this.cancelRandomItem(nextState) }className={cancelRandomItemClassNames}>Cancel</button>
+								</div>
+							</div>
+							</article>
 						</div>
-						</article>
+						<button onClick={ (e: Event) => this.cancelRandomItem(nextState) } class="modal-close is-large" aria-label="close"></button>
 					</div>
-					<button onClick={ (e: Event) => this.cancelRandomItem(nextState) } class="modal-close is-large" aria-label="close"></button>
-				</div>
+				</div>)
+				: <div>Authenticating</div>
+				}
 			</PageComponent>
 		);
 	}

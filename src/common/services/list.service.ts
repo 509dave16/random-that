@@ -57,7 +57,7 @@ class ListService {
 			updatedItem.id = uuid();
 		}
 		const { node } = await this.getItemsNode();
-		await node.get(updatedItem.id).put(updatedItem).then();
+		await node.get(updatedItem.id).put(updatedItem, (data) => { console.log(data); }).then();
 	}
 
 	public async deleteList(listId: string): Promise<any> {
@@ -71,9 +71,9 @@ class ListService {
 	}
 
 	private getNode(path: string, at?: any): any {
-		// let node = gunUser.get(path);
-		let node = gun.get(path);
-		console.log(gunUser);
+		// let node = gun.get(path);
+		let node = gunUser.get(path);
+		console.log(gun);
 		if (at) {
 			node = at.get(path);
 		}
@@ -86,8 +86,14 @@ class ListService {
 			nodeObj = this.getNode(path, at);
 		}
 		const { node } = nodeObj;
-		const result = await node.once().promise();
-		return result.put !== undefined;
+		try {
+			const result = await node.load().promise();
+			return result.put !== undefined;
+		} catch (e) {
+			console.log(e);
+		}
+
+		return false;
 	}
 
 	private async initCollectionNodeMetadata(path): Promise<any> {

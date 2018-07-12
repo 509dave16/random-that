@@ -72,7 +72,10 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		}
 	}
 
-	public async componentWillMount() {
+	public  loadLists = async (isAuthenticated) => {
+		if (!isAuthenticated) {
+			return;
+		}
 		const lists = await listService.getLists();
 		this.setState({ lists });
 	}
@@ -83,7 +86,7 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		const createListClassNames = classNames('button', 'is-success', 'm-r-sm', { isLoading: nextState.waiting });
 
 		return (
-			<PageComponent history={this.props.history} headerOptions={{ back: false, title: 'Lists'}}>
+			<PageComponent onAuthenticated={this.loadLists} history={this.props.history} headerOptions={{ back: false, title: 'Lists'}}>
 				<div class="list">
 					{
 						nextState.lists.map((list) => {

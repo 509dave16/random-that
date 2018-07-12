@@ -11,16 +11,20 @@ interface Props {
 	location: any;
 }
 // tslint:disable-next-line
-interface State { item: Item, updating: boolean, title: string }
+interface State { item: Item, updating: boolean, title: string, isAuthenticated: boolean }
 
 export default class ItemPage extends BaseComponent<Props, State> {
 
 	constructor(props) {
 		super(props);
-		this.state = { item: { ...emptyItem }, updating: false, title: '' };
+		this.state = { item: { ...emptyItem }, updating: false, title: '', isAuthenticated: false };
 	}
 
-	public async componentWillMount() {
+	public loadItem = async (isAuthenticated) => {
+		this.setState({isAuthenticated});
+		if (!isAuthenticated) {
+			return;
+		}
 		const { params } = this.props.match;
 		const item = await listService.getItem(params.itemId) || { ...emptyItem };
 		this.setState({ item, title: item.name });
@@ -42,21 +46,27 @@ export default class ItemPage extends BaseComponent<Props, State> {
 		}
 		const updateItemClassNames = classNames('m-t-sm', 'button', 'is-success', 'is-flex-basis-100-mobile');
 		return (
-			<PageComponent history={this.props.history} headerOptions={{ title: nextState.title }}>
-				<div class="field">
-					<label class="label">Name</label>
-					<div class="control">
-						<input value={nextState.item.name} onInput={(e: Event) => this.handleStateInput('item.name', e) } class="input" type="text" placeholder="Text input" />
-					</div>
-				</div>
-				<div class="is-flex">
-					<a onClick={(e) => { this.updateItem(nextState); }} className={updateItemClassNames}>
-						<span class="icon">
-							<ion-icon color="white" size="large" name="save"></ion-icon>
-						</span>
-						<span>Update</span>
-					</a>
-				</div>
+			<PageComponent onAuthenticated={this.loadItem} history={this.props.history} headerOptions={{ title: nextState.title }}>
+				{
+					nextState.isAuthenticated ?
+					(<div>
+						<div class="field">
+							<label class="label">Name</label>
+							<div class="control">
+								<input value={nextState.item.name} onInput={(e: Event) => this.handleStateInput('item.name', e) } class="input" type="text" placeholder="Text input" />
+							</div>
+						</div>
+						<div class="is-flex">
+							<a onClick={(e) => { this.updateItem(nextState); }} className={updateItemClassNames}>
+								<span class="icon">
+									<ion-icon color="white" size="large" name="save"></ion-icon>
+								</span>
+								<span>Update</span>
+							</a>
+						</div>
+					</div>)
+					: <div>Authenticating</div>
+				}
 			</PageComponent>
 		);
 	}
