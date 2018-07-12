@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { Component } from 'inferno';
-import authService from '../../common/services/auth.service';
+import authService, { STATUS_SUCCESS } from '../../common/services/auth.service';
 import { Breadcrumb, createBreadcrumbs } from '../../utils/component-helpers';
 import { toggleClassesOnInteract } from '../../utils/css';
+
 export interface HeaderOptions {
 	auth?: boolean;
 	back?: boolean;
@@ -33,18 +34,14 @@ export class PageComponent extends Component<PageProps, PageState> {
 
 	constructor(props) {
 		super(props);
-		// this.state = { breadcrumbs: [], isAuthenticated: false, loading: true };
-		this.state = { breadcrumbs: [], isAuthenticated: true, loading: false };
+		this.state = { breadcrumbs: [], isAuthenticated: false, loading: true };
 	}
 
 	public async componentWillMount() {
 		const breadcrumbs: Breadcrumb[] = await createBreadcrumbs(window.location.pathname);
-		// const isAuthenticated: boolean = await authService.isAuthenticatedAsync();
-		// if (isAuthenticated) {
-		// 	await authService.loadData();
-		// }
-		// this.setState({breadcrumbs, isAuthenticated, loading: false});
-		this.setState({breadcrumbs});
+		const response = await authService.isAuthenticated();
+		const isAuthenticated = response.status === STATUS_SUCCESS;
+		this.setState({breadcrumbs, isAuthenticated, loading: false});
 	}
 
 	public onNavbarItemRef = (node) => {
@@ -81,8 +78,12 @@ export class PageComponent extends Component<PageProps, PageState> {
 			textColor: 'white',
 			title: 'Default'
 		};
+		if (nextState.loading) {
+			return (<div class="is-loading"></div>);
+		}
 		const options = Object.assign({}, defaultOptions, nextProps.headerOptions);
 		if (!nextState.loading && !nextState.isAuthenticated && options.auth) {
+			authService.setReferrer(window.location.pathname);
 			nextProps.history.push('/auth');
 		}
 		return (
