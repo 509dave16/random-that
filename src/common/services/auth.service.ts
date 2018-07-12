@@ -1,4 +1,4 @@
-import { gunUser } from './gun.service';
+import { gun } from './gun.service';
 export const STATUS_SUCCESS = 'success';
 export const STATUS_ERROR = 'error';
 const ACTION_CREATE = 'create';
@@ -45,7 +45,7 @@ class AuthService {
 
 	private auth(credentials: Credentials, action: string, message: string): Promise<FriendlyResponse> {
 		return new Promise((resolve, reject) => {
-			gunUser[action](credentials.username, credentials.password, (ack) => {
+			gun.user()[action](credentials.username, credentials.password, (ack) => {
 				if (ack.err || ack.status === 'error') {
 					reject({ status: STATUS_ERROR, message: ack.err || ack.message});
 				} else {
@@ -58,7 +58,7 @@ class AuthService {
 
 	public async logout() {
 		this.unsetCredentials();
-		gunUser.leave();
+		gun.user().leave();
 	}
 
 	private getCredentials(): Credentials|null {

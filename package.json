@@ -22,7 +22,7 @@
     "@capacitor/ios": "^1.0.0-beta.0",
     "bulma": "^0.7.1",
     "classnames": "^2.2.6",
-    "gun": "^0.9.9993",
+    "gun": "^0.9.9994",
     "inferno": "^5.2.0",
     "inferno-clone-vnode": "^5.2.0",
     "inferno-compat": "^5.2.0",

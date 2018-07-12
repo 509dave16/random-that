@@ -1,7 +1,7 @@
 // import { items, lists } from '../data/mocks';
 import { Item } from '../interfaces/item.interface';
 import { List } from '../interfaces/list.interface';
-import { gunUser } from './gun.service';
+import { gun } from './gun.service';
 import uuid from 'uuid/v4';
 
 class ListService {
@@ -74,7 +74,7 @@ class ListService {
 		if (at) {
 			return at.get(path);
 		}
-		return gunUser.get(path);
+		return gun.user().get(path);
 	}
 
 	private async isNodeSet(path: string, at?: any): Promise<boolean> {
@@ -82,8 +82,8 @@ class ListService {
 		if (at) {
 			node = this.getNode(path, at);
 		}
-		const keys = await node.once().then();
-		return keys === undefined;
+		const result = await node.once().then();
+		return result !== undefined;
 	}
 
 	private async initCollectionNodeMetadata(path): Promise<any> {
@@ -93,7 +93,9 @@ class ListService {
 
 	private async getCollectionNodeData(path): Promise<any[]> {
 		const collectionNode = await this.getCollectionNode(path);
-		const nodeData = collectionNode.load().then();
+		const dumpOnMe = 1;
+		console.log(dumpOnMe);
+		const nodeData = await collectionNode.load().then();
 		const collection: any[] = [];
 		for (const index in nodeData) {
 			if (index === '_' || index === 'metadata') {
@@ -105,8 +107,8 @@ class ListService {
 	}
 
 	private async getCollectionNode(path): Promise<any> {
-		const nodeIniitalized = await this.isNodeSet(path);
-		if (!nodeIniitalized) {
+		const nodeInitialized = await this.isNodeSet(path);
+		if (nodeInitialized) {
 			await this.initCollectionNodeMetadata(path);
 		}
 		return this.getNode(path);
