@@ -6,46 +6,30 @@ import uuid from 'uuid/v4';
 
 class ListService {
 	public async getLists(): Promise<List[]> {
-		console.log('here');
-		const node = gunUser.get('lists');
-		const promise = new Promise((resolve, reject) => {
-			node.map((data) => {
-				const itemKeys = Object.getOwnPropertyNames(data);
-				console.log(itemKeys);
-				console.log(data);
-				resolve([]);
-			});
-		});
-		const result = await promise;
-		console.log(node);
-		console.log(result);
-		console.log('here');
-		return Promise.resolve([]);
+		return this.getCollectionNodeData('lists');
 	}
 
-	public async clearLists(): Promise<any> {
-		return gunUser.get('lists').put({}).then();
+	public async getListsNode(): Promise<any> {
+		return this.getCollectionNode('lists');
 	}
 
 	public async getList(listId: string): Promise<List|undefined> {
-		const lists: List[] = await this.getLists();
-		return Promise.resolve(lists.find((list) => list.id === listId));
+		const listsNode = await this.getListsNode();
+		const list = await listsNode.get(listId).load();
+		return list;
 	}
 
-	public getItems(): Promise<Item[]> {
-		return new Promise((resolve, reject) => {
-			gunUser.get('items').once((data) => {
-				resolve(data || []);
-			});
-		});
+	public async getItems(): Promise<Item[]> {
+		return this.getCollectionNodeData('items');
 	}
 
-	private setList(list: List): Promise<any> {
-		return gunUser.get('lists').set(list).then();
+	public async getItemsNode(): Promise<any> {
+		return this.getCollectionNode('items');
 	}
 
-	private setItem(item: Item): Promise<any> {
-		return gunUser.get('items').set(item).then();
+	public async clearLists(): Promise<any> {
+		const listsNode = await this.getListsNode();
+		return listsNode.put(null).then();
 	}
 
 	public async getListItems(listId: string): Promise<Item[]> {
@@ -54,60 +38,78 @@ class ListService {
 	}
 
 	public async getItem(itemId: string): Promise<Item|undefined> {
-		const items: Item[] = await this.getItems();
-		return Promise.resolve(items.find((item) => item.id === itemId));
+		const itemsNode = await this.getItemsNode();
+		const item = await itemsNode.get(itemId).load().then();
+		return item;
 	}
 
 	public async saveList(updatedList: List): Promise<any> {
 		if (!updatedList.id) {
 			updatedList.id = uuid();
 		}
-		// const lists: List[] = await this.getLists();
-		// let listIndex = lists.findIndex((list) => list.id === updatedList.id);
-		// let replace = 1;
-		// if (listIndex === -1) {
-		// 	listIndex = lists.length;
-		// 	replace = 0;
-		// }
-		// lists.splice(listIndex, replace, updatedList);
-		// return this.putLists(lists);
-		return this.setList(updatedList);
+		const listsNode = await this.getListsNode();
+		await listsNode.get(updatedList.id).put(updatedList).then();
+		return updatedList;
 	}
 
 	public async saveItem(updatedItem: Item): Promise<any> {
 		if (!updatedItem.id) {
 			updatedItem.id = uuid();
 		}
-		// const items: Item[] = await this.getItems();
-		// let itemIndex = items.findIndex((item) => item.id === updatedItem.id);
-		// let replace = 1;
-		// if (itemIndex === -1) {
-		// 	itemIndex = items.length;
-		// 	replace = 0;
-		// }
-		// items.splice(itemIndex, replace, updatedItem);
-		return this.setItem(updatedItem);
+		const itemsNode = await this.getItemsNode();
+		await itemsNode.get(updatedItem.id).put(updatedItem).then();
 	}
 
-	public async deleteList(listId: string): Promise<List|undefined> {
-		const lists: List[] = await this.getLists();
-		const listIndex = lists.findIndex((list) => list.id === listId);
-		const listToRemove = lists[listIndex];
-		// const removedList = lists.splice(listIndex, 1).pop();
-		// await this.putLists(lists);
-		// return Promise.resolve(removedList);
-		return gunUser.get('lists').unset(listToRemove).then();
-
+	public async deleteList(listId: string): Promise<any> {
+		const listsNode = await this.getListsNode();
+		return listsNode.get(listId).put(null).then();
 	}
 
-	public async deleteItem(itemId: string): Promise<Item|undefined> {
-		const items: Item[] = await this.getItems();
-		const itemIndex = items.findIndex((item) => item.id === itemId);
-		const itemToRemove = items[itemIndex];
-		// const removedItem = items.splice(itemIndex, 1).pop();
-		// this.putItems(items);
-		// return Promise.resolve(removedItem);
-		return gunUser.get('items').unset(itemToRemove).then();
+	public async deleteItem(itemId: string): Promise<Item> {
+		const itemsNode = await this.getItemsNode();
+		return itemsNode.get(itemId).put(null).then();
+	}
+
+	private getNode(path: string, at?: any): any {
+		if (at) {
+			return at.get(path);
+		}
+		return gunUser.get(path);
+	}
+
+	private async isNodeSet(path: string, at?: any): Promise<boolean> {
+		let node = this.getNode(path);
+		if (at) {
+			node = this.getNode(path, at);
+		}
+		const keys = await node.once().then();
+		return keys === undefined;
+	}
+
+	private async initCollectionNodeMetadata(path): Promise<any> {
+		const node = this.getNode(path);
+		return node.put({ metadata : { type: 'collection'}}).then();
+	}
+
+	private async getCollectionNodeData(path): Promise<any[]> {
+		const collectionNode = await this.getCollectionNode(path);
+		const nodeData = collectionNode.load().then();
+		const collection: any[] = [];
+		for (const index in nodeData) {
+			if (index === '_' || index === 'metadata') {
+				continue;
+			}
+			collection.push(nodeData[index]);
+		}
+		return collection;
+	}
+
+	private async getCollectionNode(path): Promise<any> {
+		const nodeIniitalized = await this.isNodeSet(path);
+		if (!nodeIniitalized) {
+			await this.initCollectionNodeMetadata(path);
+		}
+		return this.getNode(path);
 	}
 }
 
