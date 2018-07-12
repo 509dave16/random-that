@@ -1,7 +1,7 @@
 // import { items, lists } from '../data/mocks';
 import { Item } from '../interfaces/item.interface';
 import { List } from '../interfaces/list.interface';
-import { gunUser, gun } from './gun.service';
+import { gunUser } from './gun.service';
 import uuid from 'uuid/v4';
 
 class ListService {
@@ -57,7 +57,7 @@ class ListService {
 			updatedItem.id = uuid();
 		}
 		const { node } = await this.getItemsNode();
-		await node.get(updatedItem.id).put(updatedItem, (data) => { console.log(data); }).then();
+		await node.get(updatedItem.id).put(updatedItem).then();
 	}
 
 	public async deleteList(listId: string): Promise<any> {
@@ -73,7 +73,6 @@ class ListService {
 	private getNode(path: string, at?: any): any {
 		// let node = gun.get(path);
 		let node = gunUser.get(path);
-		console.log(gun);
 		if (at) {
 			node = at.get(path);
 		}
@@ -110,8 +109,8 @@ class ListService {
 			if (index === '_' || index === 'metadata') {
 				continue;
 			}
-			const data = await node.get(index).load().then();
-			collection.push(data);
+			const data = await node.get(index).load().promise();
+			collection.push(data.put);
 		}
 		return collection;
 	}

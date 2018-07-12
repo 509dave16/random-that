@@ -1,6 +1,7 @@
 // ts-lint:disable
 import Gun from 'gun/gun';
 import 'gun/lib/not';
+import 'gun/lib/open';
 import 'gun/lib/load';
 import 'gun/lib/unset';
 import 'gun/lib/not';

@@ -33,7 +33,6 @@ export default class ListPage extends BaseComponent<Props, State> {
 	}
 
 	public loadList = async (isAuthenticated) => {
-		this.setState({ isAuthenticated });
 		if (!isAuthenticated) {
 			return;
 		}
@@ -43,7 +42,7 @@ export default class ListPage extends BaseComponent<Props, State> {
 			return;
 		}
 		const items: Item[] = await listService.getListItems(list.id);
-		this.setState({ items, list });
+		this.setState({ items, list, isAuthenticated });
 	}
 
 	public onListItemRef = (node) => {
@@ -87,7 +86,6 @@ export default class ListPage extends BaseComponent<Props, State> {
 
 	public confirmRandomItem(state) {
 		state.randomItem.done = true;
-		// const items = state.items.map((item) => ({ ...item }));
 		const items = state.items.map((item) => item);
 		this.setState({ items, randomItem: { ...emptyItem }});
 		this.toggleRandomThatModal();
@@ -121,7 +119,8 @@ export default class ListPage extends BaseComponent<Props, State> {
 		const item: Item = state.newItem;
 		item.list_id = state.list.id;
 		this.setState({ waiting: true });
-		await listService.saveItem(item);
+		const newItem = { ... item };
+		await listService.saveItem(newItem);
 		const items: Item[] = state.items;
 		this.toggleCreateItem(state);
 		this.setState({ waiting: false, items: [...items, item] });
