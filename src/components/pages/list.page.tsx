@@ -114,7 +114,6 @@ export default class ListPage extends BaseComponent<Props, State> {
 			return; // don't perform again
 		}
 		const item: Item = state.newItem;
-		item.id += Math.floor(Math.random() * 10000);
 		item.list_id = state.list.id;
 		this.setState({ waiting: true });
 		await listService.saveItem(item);

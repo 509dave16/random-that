@@ -1,13 +1,7 @@
 import classNames from 'classnames';
-import { Redirect } from 'inferno-router';
 import { BaseComponent } from '../../common/classes/base.component';
-import { default as authService, FriendlyResponse, STATUS_SUCCESS } from '../../common/services/auth.service';
+import { default as authService, FriendlyResponse, STATUS_SUCCESS, Credentials } from '../../common/services/auth.service';
 import { PageComponent } from '../layout/page.component';
-
-export interface Profile {
-	username: string;
-	password: string;
-}
 
 interface Props {
 	history: any;
@@ -15,36 +9,35 @@ interface Props {
 	location: any;
 }
 // tslint:disable-next-line
-interface State { profile: Profile, updating: boolean, action: string, redirectToReferrer: boolean, error: string }
+interface State { credentials: Credentials, updating: boolean, action: string, error: string }
 
 const ACTION_LOGIN = 'login';
 const ACTION_REGISTER = 'register';
-const emptyProfile: Profile = { username: '', password: '' };
+const emptyCredentials: Credentials = { username: '', password: '' };
 
 export default class AuthPage extends BaseComponent<Props, State> {
 
 	constructor(props) {
 		super(props);
-		this.state = { profile: { ...emptyProfile }, updating: false, action: ACTION_LOGIN, redirectToReferrer: false, error: ''};
+		this.state = { credentials: { ...emptyCredentials }, updating: false, action: ACTION_LOGIN, error: ''};
 	}
 
 	public async handleAuth(state: State) {
 		if (state.updating) {
 			return;
 		}
-		let profile: Profile = state.profile;
+		let credentials: Credentials = state.credentials;
 		let error: string = '';
 		try {
-			const response: FriendlyResponse = await authService[state.action](profile);
+			const response: FriendlyResponse = await authService[state.action](credentials);
 			if (response.status === STATUS_SUCCESS) {
-				this.setState({ redirectToReferrer: true });
-				this.props.history.push('/lists');
+				this.props.history.push(authService.getReferer());
 			}
 		} catch (e) {
 			error = e.message || 'Error thrown';
-			profile = { ...emptyProfile };
+			credentials = { ...emptyCredentials };
 		}
-		this.setState({ updating: false, profile, error });
+		this.setState({ updating: false, credentials, error });
 	}
 
 	public closeError = () => {
@@ -56,12 +49,6 @@ export default class AuthPage extends BaseComponent<Props, State> {
 	}
 
 	public render(nextProps: Props, nextState: State, nextContext: any) {
-		const from = nextProps.location.from || '/';
-		const { redirectToReferrer } = nextState;
-
-		if (redirectToReferrer) {
-			return <Redirect to={from} />;
-		}
 		const submitClassNames = classNames('m-t-sm', 'button', 'is-success', 'is-flex-basis-100-mobile');
 		const errorClassNames = classNames('notification is-danger', {'is-hidden': !nextState.error });
 		return (
@@ -78,13 +65,13 @@ export default class AuthPage extends BaseComponent<Props, State> {
 					<div class="field panel-block">
 						<label class="m-r-sm">Username</label>
 						<div class="control">
-							<input value={nextState.profile.username} onInput={(e: Event) => this.handleStateInput('profile.username', e) } class="input" type="text" placeholder="Username" />
+							<input value={nextState.credentials.username} onInput={(e: Event) => this.handleStateInput('credentials.username', e) } class="input" type="text" placeholder="Username" />
 						</div>
 					</div>
 					<div class="field panel-block">
 						<label class="m-r-sm">Password</label>
 						<div class="control">
-							<input value={nextState.profile.password} onInput={(e: Event) => this.handleStateInput('profile.password', e) } class="input" type="password" placeholder="Password" />
+							<input value={nextState.credentials.password} onInput={(e: Event) => this.handleStateInput('credentials.password', e) } class="input" type="password" placeholder="Password" />
 						</div>
 					</div>
 					<div class="is-flex">
