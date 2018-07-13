@@ -72,7 +72,7 @@ export default class ListsPage extends BaseComponent<Props, State> {
 		}
 	}
 
-	public  loadLists = async (isAuthenticated) => {
+	public loadLists = async (isAuthenticated) => {
 		if (!isAuthenticated) {
 			return;
 		}

@@ -39,9 +39,12 @@ export class PageComponent extends Component<PageProps, PageState> {
 	}
 
 	public async componentWillMount() {
-		const breadcrumbs: Breadcrumb[] = await createBreadcrumbs(window.location.pathname);
 		const response = await authService.isAuthenticated();
 		const isAuthenticated = response.status === STATUS_SUCCESS;
+		let breadcrumbs: Breadcrumb[] = [];
+		if (isAuthenticated) {
+			breadcrumbs = await createBreadcrumbs(window.location.pathname);
+		}
 		this.props.onAuthenticated ? this.props.onAuthenticated(isAuthenticated) : console.log('no auth hook');
 		this.setState({breadcrumbs, isAuthenticated, loading: false});
 	}

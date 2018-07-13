@@ -1,4 +1,4 @@
-import { gun } from './gun.service';
+import { gun, gunUser } from './gun.service';
 export const STATUS_SUCCESS = 'success';
 export const STATUS_ERROR = 'error';
 const ACTION_CREATE = 'create';
@@ -35,8 +35,9 @@ class AuthService {
 		return errorResponse;
 	}
 
-	public login(credentials: Credentials): Promise<FriendlyResponse> {
-		return this.auth(credentials, ACTION_AUTH, 'loggedin');
+	public async login(credentials: Credentials): Promise<FriendlyResponse> {
+		const response = await this.auth(credentials, ACTION_AUTH, 'loggedin');
+		return response;
 	}
 
 	public register(credentials: Credentials): Promise<FriendlyResponse> {

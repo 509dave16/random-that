@@ -34,7 +34,7 @@ class ListService {
 
 	public async getListItems(listId: string): Promise<Item[]> {
 		const items: Item[] = await this.getItems();
-		return Promise.resolve(items.filter((item) => item.list_id === listId));
+		return items.filter((item) => item.list_id === listId);
 	}
 
 	public async getItem(itemId: string): Promise<Item|undefined> {
@@ -71,7 +71,6 @@ class ListService {
 	}
 
 	private getNode(path: string, at?: any): any {
-		// let node = gun.get(path);
 		let node = gunUser.get(path);
 		if (at) {
 			node = at.get(path);
@@ -104,7 +103,7 @@ class ListService {
 	private async getCollectionNodeData(path): Promise<any[]> {
 		const { node } = await this.getCollectionNode(path);
 		const collection: any[] = [];
-		const indexes = await node.once().then();
+		const indexes = await node.then();
 		for (const index in indexes) {
 			if (index === '_' || index === 'metadata') {
 				continue;
